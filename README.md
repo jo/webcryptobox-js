@@ -33,7 +33,7 @@ Now you can dance with the lib like its 1984:
 ```js
 const { privateKey, publicKey } = await wcb.generateKeyPair()
 const text = 'Nobody else can offer me something, something heart felt like you did it!'
-const message = wcb.encodeText(text)
+const message = wcb.decodeText(text)
 const iv = wcb.generateIv()
 const box = await wcb.deriveAndEncrypt({ message, iv, privateKey, publicKey })
 ```
