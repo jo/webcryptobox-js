@@ -1,0 +1,16 @@
+{
+  "name": "webcryptobox",
+  "version": "1.0.0",
+  "description": "Tiny utility library for asymetric encryption with WebCrypto.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "tap --no-cov test/index.js"
+  },
+  "keywords": ["WebCrypto", "crypto", "subtle", "encryption", "decryption", "nacl", "e2ee"],
+  "author": "Johannes J. Schmidt",
+  "license": "Apache 2.0",
+  "devDependencies": {
+    "tap": "^15.1.6"
+  }
+}

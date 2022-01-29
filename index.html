@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang=en>
+<head>
+  <title>WebCryptoBox</title>
+  <style>
+    body {
+      margin: 5vh 5vw;
+    }
+    section {
+      display: flex;
+      column-gap: 2.5vw;
+    }
+    article {
+      flex: 1;
+    }
+    textarea {
+      box-sizing: border-box;
+      width: 100%;
+    }
+    textarea:invalid {
+      outline: 1px solid red;
+    }
+  </style>
+</head>
+<body>
+<h1>WebCryptoBox</h1>
+<p>Asymetric encryption demo.</p>
+
+<section spellcheck=false>
+  <article>
+    <h2>Alice</h2>
+    <p>
+      <label for=your-private-key>Private Key</label>
+      <textarea id=your-private-key rows=6></textarea>
+    </p>
+    <p>
+      <label for=your-public-key>Public Key</label>
+      <textarea id=your-public-key rows=5></textarea>
+    </p>
+    <p>
+      <label for=your-fingerprint>Fingerprint</label>
+      <textarea id=your-fingerprint rows=1 disabled></textarea>
+    </p>
+    <p>
+      <label for=your-others-public-key>Bobs Public Key</label>
+      <textarea id=your-others-public-key rows=3 disabled></textarea>
+    </p>
+    <p>
+      <label for=your-message>Message to Bob</label>
+      <textarea id=your-message rows=3></textarea>
+    </p>
+    <p>
+      <label for=your-received-iv>Received IV</label>
+      <textarea id=your-received-iv rows=1></textarea>
+    </p>
+    <p>
+      <label for=your-received-message>Received Encrypted Message</label>
+      <textarea id=your-received-message rows=2></textarea>
+    </p>
+    <p>
+      <label for=your-decrypted-message>Received Decrypted Message</label>
+      <textarea id=your-decrypted-message rows=3 disabled></textarea>
+    </p>
+  </article>
+  <article>
+    <h2>Bob</h2>
+    <p>
+      <label for=my-private-key>Private Key</label>
+      <textarea id=my-private-key rows=6></textarea>
+    </p>
+    <p>
+      <label for=my-public-key>Public Key</label>
+      <textarea id=my-public-key rows=5></textarea>
+    </p>
+    <p>
+      <label for=my-fingerprint>Fingerprint</label>
+      <textarea id=my-fingerprint rows=1 disabled></textarea>
+    </p>
+    <p>
+      <label for=my-others-public-key>Alices Public Key</label>
+      <textarea id=my-others-public-key rows=3 disabled></textarea>
+    </p>
+    <p>
+      <label for=my-message>Message to Alice</label>
+      <textarea id=my-message rows=3></textarea>
+    </p>
+    <p>
+      <label for=my-received-iv>Received IV</label>
+      <textarea id=my-received-iv rows=1></textarea>
+    </p>
+    <p>
+      <label for=my-received-message>Received Encrypted Message</label>
+      <textarea id=my-received-message rows=2></textarea>
+    </p>
+    <p>
+      <label for=my-decrypted-message>Received Decrypted Message</label>
+      <textarea id=my-decrypted-message rows=3 disabled></textarea>
+    </p>
+  </article>
+</section>
+<script type=module>
+  import * as wcb from './index.js'
+
+  class Demo {
+    constructor (elements) {
+      this.elements = elements
+      this.keys = {}
+      this.owners = ['you', 'me']
+
+      for (const owner of this.owners) {
+        this.keys[owner] = {}
+        this.elements[owner].privateKeyInput.addEventListener('input', async () => await this.onPrivateKeyInput(owner), { passive: true })
+        this.elements[owner].publicKeyInput.addEventListener('input', async () => await this.onPublicKeyInput(owner), { passive: true })
+        this.elements[owner].messageInput.addEventListener('input', async () => await this.onMessageInput(owner), { passive: true })
+        this.elements[owner].receivedMessageInput.addEventListener('input', async () => await this.onReceivedMessageInput(owner), { passive: true })
+      }
+    }
+
+    other (owner) {
+      return this.owners.find(o => o !== owner)
+    }
+
+    async init () {
+      for (const owner of this.owners) {
+        this.keys[owner] = await wcb.generateKeyPair()
+
+        await this.updatePrivateKeyInput(owner)
+        await this.updatePublicKeyInput(owner)
+        await this.updateFingerprintInput(owner)
+      }
+    }
+
+    async updatePrivateKeyInput (owner) {
+      const pem = await wcb.exportPrivateKeyPem(this.keys[owner].privateKey)
+      this.elements[owner].privateKeyInput.value = pem
+    }
+
+    async updatePublicKeyInput (owner) {
+      const other = this.other(owner)
+      const pem = await wcb.exportPublicKeyPem(this.keys[owner].publicKey)
+      this.elements[owner].publicKeyInput.value = pem
+      this.elements[other].othersPublicKeyInput.value = pem
+    }
+
+    async updateFingerprintInput (owner) {
+      const fingerprint = await wcb.generateFingerprint(this.keys[owner].publicKey)
+      this.elements[owner].fingerprintInput.value = fingerprint
+    }
+
+    updateMessageInputDisabled (owner) {
+      const other = this.other(owner)
+      this.elements[owner].messageInput.disabled = !this.keys[owner].privateKey
+      this.elements[other].messageInput.disabled = !this.keys[owner].publicKey
+    }
+
+    async onPrivateKeyInput (owner) {
+      const other = this.other(owner)
+      const pem = this.elements[owner].privateKeyInput.value
+      if (!pem) {
+        delete this.keys[owner].privateKey
+        this.elements[owner].privateKeyInput.setCustomValidity('')
+        this.updateMessageInputDisabled(owner)
+        return
+      }
+      try {
+        this.keys[owner].privateKey = await wcb.importPrivateKeyPem(pem)
+        this.keys[owner].publicKey = await wcb.derivePublicKey(this.keys[owner].privateKey)
+        await this.updatePublicKeyInput(owner)
+        await this.updateFingerprintInput(owner)
+        this.elements[owner].privateKeyInput.setCustomValidity('')
+      } catch (e) {
+        console.warn('cannot import private key', e)
+        delete this.keys[owner].privateKey
+        this.elements[owner].privateKeyInput.setCustomValidity('Private key data is invalid.')
+        this.elements[owner].privateKeyInput.reportValidity()
+      }
+      this.updateMessageInputDisabled(owner)
+    }
+
+    async onPublicKeyInput (owner) {
+      const other = this.other(owner)
+      const pem = this.elements[owner].publicKeyInput.value
+      if (!pem) {
+        delete this.keys[owner].publicKey
+        this.elements[other].othersPublicKeyInput.value = ''
+        this.elements[owner].publicKeyInput.setCustomValidity('')
+        this.updateMessageInputDisabled(owner)
+        return
+      }
+      try {
+        this.keys[owner].publicKey = await wcb.importPublicKeyPem(pem)
+        await this.updateFingerprintInput(owner)
+        this.elements[other].othersPublicKeyInput.value = pem
+        this.elements[owner].publicKeyInput.setCustomValidity('')
+      } catch (e) {
+        console.warn('cannot import public key', e)
+        delete this.keys[owner].publicKey
+        this.elements[other].othersPublicKeyInput.value = ''
+        this.elements[owner].publicKeyInput.setCustomValidity('Public key data is invalid.')
+        this.elements[owner].publicKeyInput.reportValidity()
+      }
+      this.updateMessageInputDisabled(owner)
+    }
+
+    async onMessageInput (owner) {
+      const other = this.other(owner)
+      const text = this.elements[owner].messageInput.value
+      const message = wcb.decodeText(text)
+      const iv = await wcb.generateIv()
+      const box = await wcb.deriveAndEncrypt({
+        message,
+        iv,
+        privateKey: this.keys[owner].privateKey,
+        publicKey: this.keys[other].publicKey
+      })
+      this.elements[other].receivedMessageInput.value = wcb.encodeBase64(box)
+      this.elements[other].receivedIvInput.value = wcb.encodeBase64(iv)
+      this.onReceivedMessageInput(other)
+    }
+
+    async onReceivedMessageInput (owner) {
+      const other = this.other(owner)
+      if (!this.keys[owner].privateKey) {
+        this.elements[owner].decryptedMessageInput.value = ''
+        this.elements[owner].receivedMessageInput.setCustomValidity('Message cannot be decrypted, no private key.')
+        return
+      }
+      if (!this.keys[other].publicKey) {
+        this.elements[owner].decryptedMessageInput.value = ''
+        this.elements[owner].receivedMessageInput.setCustomValidity('Message cannot be decrypted, missing others public key.')
+        return
+      }
+      const base64Box = this.elements[owner].receivedMessageInput.value
+      if (!base64Box) {
+        this.elements[owner].receivedMessageInput.setCustomValidity('')
+        return
+      }
+      try {
+        const box = wcb.decodeBase64(base64Box)
+        const base64Iv = this.elements[owner].receivedIvInput.value
+        const iv = wcb.decodeBase64(base64Iv)
+        const openedBox = await wcb.deriveAndDecrypt({
+          box,
+          iv,
+          privateKey: this.keys[owner].privateKey,
+          publicKey: this.keys[other].publicKey
+        })
+        const text = wcb.encodeText(openedBox)
+        this.elements[owner].decryptedMessageInput.value = text
+        this.elements[owner].receivedMessageInput.setCustomValidity('')
+      } catch (e) {
+        console.warn('cannot decrypt message', e)
+        this.elements[owner].decryptedMessageInput.value = ''
+        this.elements[owner].receivedMessageInput.setCustomValidity('Message cannot be decrypted.')
+      }
+    }
+  }
+
+  window.demo = new Demo({
+    me: {
+      privateKeyInput: document.getElementById('my-private-key'),
+      publicKeyInput: document.getElementById('my-public-key'),
+      fingerprintInput: document.getElementById('my-fingerprint'),
+      othersPublicKeyInput: document.getElementById('my-others-public-key'),
+      messageInput: document.getElementById('my-message'),
+      receivedMessageInput: document.getElementById('my-received-message'),
+      receivedIvInput: document.getElementById('my-received-iv'),
+      decryptedMessageInput: document.getElementById('my-decrypted-message')
+    },
+    you: {
+      privateKeyInput: document.getElementById('your-private-key'),
+      publicKeyInput: document.getElementById('your-public-key'),
+      fingerprintInput: document.getElementById('your-fingerprint'),
+      othersPublicKeyInput: document.getElementById('your-others-public-key'),
+      messageInput: document.getElementById('your-message'),
+      receivedMessageInput: document.getElementById('your-received-message'),
+      receivedIvInput: document.getElementById('your-received-iv'),
+      decryptedMessageInput: document.getElementById('your-decrypted-message')
+    }
+  })
+  window.demo.init()
+</script>
