@@ -55,19 +55,19 @@ export const encodeBase64 = data => btoa(String.fromCharCode(...new Uint8Array(d
 
 
 // decode public ecdh key pem
-export const decodePublicKeyPem = pem => decodeBase64(pem.slice(27, -25))
+export const decodePublicKeyPem = pem => decodeBase64(pem.slice(27, -25).replace(/\n/g, ''))
 
 // encode public ecdh key as pem
 export const encodePublicKeyPem = data => `-----BEGIN PUBLIC KEY-----
-${encodeBase64(data)}
+${encodeBase64(data).match(/.{1,80}/g).join('\n')}
 -----END PUBLIC KEY-----`
 
 // decode private ecdh key pem
-export const decodePrivateKeyPem = pem => decodeBase64(pem.slice(28, -26))
+export const decodePrivateKeyPem = pem => decodeBase64(pem.slice(28, -26).replace(/\n/g, ''))
 
 // encode private ecdh key as pem
 export const encodePrivateKeyPem = data => `-----BEGIN PRIVATE KEY-----
-${encodeBase64(data)}
+${encodeBase64(data).match(/.{1,80}/g).join('\n')}
 -----END PRIVATE KEY-----`
 
 

@@ -147,7 +147,11 @@ const { privateKey } = await wcb.generateKeyPair()
 const privateKeyData = await wcb.exportPrivateKey(privateKey)
 const pem = wcb.encodePrivateKeyPem(privateKeyData)
 // -----BEGIN PRIVATE KEY-----
-// MIHuAgEAMBAGByqGSM49AgEGBSuBBAAjBIHWMIHTAgEBBEIAN1rTFvE3Lzi/E0SSHLOBC3BZ1JiI+Xpj3hxaj3SPjZBPPZX0CkDCsa2GkEULnJwC3GE9HhbJgrr29f4JVNnI9HOhgYkDgYYABACDDclkGZg0BsVZCF5KV1j7zs5qBCg2shJz4V5PD0xc18eDh+EpYOp702wbejQGMGP4GSzT2Yu3VRH3gMMJy+L2zQDFXQGDiLEKZOJu4dN38aH8LwA+FUUg7RZoJWpypR5tImvdyuqFLvsjHC9mD29a9+xlJ5rTwh4uyuj6a219v3PyHQ==
+// MIHuAgEAMBAGByqGSM49AgEGBSuBBAAjBIHWMIHTAgEBBEIAaaRXNmPnb4NPvB8iF+FuNJEaztFIuU3S
+// DcL8WFuUymIB2HH4XQZVvR/w5fi+sxbM/BpdX23nYp1D20hEEAdx/ZuhgYkDgYYABAE3i9CbMEJtSCDq
+// en0An/S67viMIJLoslNHgOGbfvp8W4EE24vQtBH3bM+nNhDFgTMDKDYLreHWfQwYH/6hQR4vNQEPHr7A
+// UwJwZ0oYtpbkt0P3W1qpHtxJF8WEZf+6Bms3tMZeUa4nhugqO1fq3ssXSx5bC6Ma7AW+dRmGVq60w/x8
+// LA==
 // -----END PRIVATE KEY-----
 ```
 
@@ -156,7 +160,11 @@ Returns the Uint8Array data of a private key for a pem.
 
 ```js
 const data = wcb.encodePrivateKeyPem(`-----BEGIN PRIVATE KEY-----
-MIHuAgEAMBAGByqGSM49AgEGBSuBBAAjBIHWMIHTAgEBBEIAN1rTFvE3Lzi/E0SSHLOBC3BZ1JiI+Xpj3hxaj3SPjZBPPZX0CkDCsa2GkEULnJwC3GE9HhbJgrr29f4JVNnI9HOhgYkDgYYABACDDclkGZg0BsVZCF5KV1j7zs5qBCg2shJz4V5PD0xc18eDh+EpYOp702wbejQGMGP4GSzT2Yu3VRH3gMMJy+L2zQDFXQGDiLEKZOJu4dN38aH8LwA+FUUg7RZoJWpypR5tImvdyuqFLvsjHC9mD29a9+xlJ5rTwh4uyuj6a219v3PyHQ==
+MIHuAgEAMBAGByqGSM49AgEGBSuBBAAjBIHWMIHTAgEBBEIAaaRXNmPnb4NPvB8iF+FuNJEaztFIuU3S
+DcL8WFuUymIB2HH4XQZVvR/w5fi+sxbM/BpdX23nYp1D20hEEAdx/ZuhgYkDgYYABAE3i9CbMEJtSCDq
+en0An/S67viMIJLoslNHgOGbfvp8W4EE24vQtBH3bM+nNhDFgTMDKDYLreHWfQwYH/6hQR4vNQEPHr7A
+UwJwZ0oYtpbkt0P3W1qpHtxJF8WEZf+6Bms3tMZeUa4nhugqO1fq3ssXSx5bC6Ma7AW+dRmGVq60w/x8
+LA==
 -----END PRIVATE KEY-----`)
 // int8Array(241) [
 //    48, 129, 238,   2,   1,   0,  48,  16,   6,   7,  42, 134,
@@ -180,7 +188,9 @@ const { publicKey } = await wcb.generateKeyPair()
 const publicKeyData = await wcb.exportPublicKey(publicKey)
 const pem = wcb.encodePublicKeyPem(publicKeyData)
 // -----BEGIN PUBLIC KEY-----
-// MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQAcoRicmHe2mo83hk7mm7K5skFNZCYUOqi4LtiaUoLlpDqeCk5CRPl6ZBZpne9OHzby0g8fKhFjd3dzObsz9xoF6kBLo3wd5UnmYrqc7MlR9xN5/p6CsBLpbd2BvKhMYz3reKu4j5vCfYudJ7ecpmIog7EnbPXVCwEqixUH7t2EDY4KzQ=
+// MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQBpsg9VAkqNoSEHcP1HiC12clzfCH4vqCo5067wsltUlPS
+// qKr22n8+ClNNYINKvWP0cGg4Z7cTxqnus3CpAMAvZTEAUfbLZOm/WGwrPxdY2IDy8UQcUvDU/N8Q5xiP
+// 18dqrijI4M/RDpjYsz7BZAg+UvaWtD6EJBK0/rgppo3rNxsEK7I=
 // -----END PUBLIC KEY-----
 ```
 
@@ -189,7 +199,9 @@ Returns the Uint8Array data of a public key for a pem.
 
 ```js
 const data = wcb.encodePublicKeyPem(`-----BEGIN PUBLIC KEY-----
-MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQArisA40NYVC27ZM2xv4uBdzkGyOyv56v2Aa0dQIoF261FBOqexQZaKOu6cH2LkN+cbenRaDQ4Wm1OzPGkBv2dde0BxG3QRwXHA3/1yN+unw4DFvo9Ik/taEgHkQQEjSj8GHcNvhZ8aSmLD8TqIUREzdin8Q+eLz+u77fSDvJJRJS/b4E=
+MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQBpsg9VAkqNoSEHcP1HiC12clzfCH4vqCo5067wsltUlPS
+qKr22n8+ClNNYINKvWP0cGg4Z7cTxqnus3CpAMAvZTEAUfbLZOm/WGwrPxdY2IDy8UQcUvDU/N8Q5xiP
+18dqrijI4M/RDpjYsz7BZAg+UvaWtD6EJBK0/rgppo3rNxsEK7I=
 -----END PUBLIC KEY-----`)
 // Uint8Array(158) [
    48, 129, 155,  48,  16,   6,   7,  42, 134,  72, 206,  61,
