@@ -148,11 +148,18 @@ tap.test('key export & import', async t => {
   })
 })
 
-tap.test('generateFingerprint', async t => {
+tap.test('generateSha256Fingerprint', async t => {
   const key = await wcb.generateKey()
-  const fingerprint = await wcb.generateFingerprint(key)
+  const fingerprint = await wcb.generateSha256Fingerprint(key)
   t.type(fingerprint, 'string')
   t.equal(fingerprint.length, 64)
+})
+
+tap.test('generateSha1Fingerprint', async t => {
+  const key = await wcb.generateKey()
+  const fingerprint = await wcb.generateSha1Fingerprint(key)
+  t.type(fingerprint, 'string')
+  t.equal(fingerprint.length, 40)
 })
 
 tap.test('encryption and decryption', async t => {

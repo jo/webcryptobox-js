@@ -1,5 +1,5 @@
 # WebCryptoBox
-Tiny utility library for asymetric encryption with WebCrypto.
+Tiny utility library for asymetric encryption via WebCrypto with zero dependencies.
 
 > I don't usually do libraries any more but when I do, it's mainly for educational purposes.
 
@@ -284,13 +284,22 @@ const publicKey = await wcb.derivePublicKey(privateKey)
 // }
 ```
 
-#### `generateFingerprint`
-Calculate a SHA-256 fingerprint of a key.
+#### `generateSha256Fingerprint`
+Calculate a SHA-256 fingerprint of a key. It has a length of 64 hex chars.
 
 ```js
 const { publicKey } = await wcb.generateKeyPair()
-const fingerprint = wcb.generateFingerprint(publicKey)
+const fingerprint = wcb.generateSha256Fingerprint(publicKey)
 // aca8f766cdef8346177987a86b0f04b14fd4060b0e2478f941adc91982d6668c
+```
+
+#### `generateSha1Fingerprint`
+Calculate a SHA-1 fingerprint of a key. It has a length of 40 hex chars.
+
+```js
+const { publicKey } = await wcb.generateKeyPair()
+const fingerprint = wcb.generateSha1Fingerprint(publicKey)
+// d04f73b7eb0b865a8d4711b5a379273a27c65581
 ```
 
 ### Key Import and Export

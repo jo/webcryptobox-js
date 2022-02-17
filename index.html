@@ -143,7 +143,7 @@
     }
 
     async updateFingerprintInput (owner) {
-      const fingerprint = await wcb.generateFingerprint(this.keys[owner].publicKey)
+      const fingerprint = await wcb.generateSha1Fingerprint(this.keys[owner].publicKey)
       this.elements[owner].fingerprintInput.value = fingerprint
     }
 

@@ -100,9 +100,15 @@ tap.test('key generation and derivation', async t => {
     console.log(publicKey)
   })
 
-  t.test('generateFingerprint', async t => {
+  t.test('generateSha256Fingerprint', async t => {
     const { publicKey } = await wcb.generateKeyPair()
-    const fingerprint = wcb.generateFingerprint(publicKey)
+    const fingerprint = await wcb.generateSha256Fingerprint(publicKey)
+    console.log(fingerprint)
+  })
+
+  t.test('generateSha1Fingerprint', async t => {
+    const { publicKey } = await wcb.generateKeyPair()
+    const fingerprint = await wcb.generateSha1Fingerprint(publicKey)
     console.log(fingerprint)
   })
 })

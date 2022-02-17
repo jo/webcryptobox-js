@@ -118,9 +118,16 @@ export const derivePublicKey = async privateKey => {
 // fingerprinting
 
 // generate a sha256 fingerprint of a key
-export const generateFingerprint = async key => {
+export const generateSha256Fingerprint = async key => {
   const keyBits = await crypto.subtle.exportKey('raw', key)
   const fingerprint = await crypto.subtle.digest('SHA-256', keyBits)
+  return encodeHex(fingerprint)
+}
+
+// generate a sha1 fingerprint of a key
+export const generateSha1Fingerprint = async key => {
+  const keyBits = await crypto.subtle.exportKey('raw', key)
+  const fingerprint = await crypto.subtle.digest('SHA-1', keyBits)
   return encodeHex(fingerprint)
 }
 
