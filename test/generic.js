@@ -4,42 +4,6 @@ import { Webcryptobox } from '../index.js'
 tap.test('cipher agnostic', async g => {
   const wcb = new Webcryptobox()
 
-  g.test('encoding & decoding', async t => {
-    const testData = new Uint8Array([97, 98, 99])
-    const testPublicKeyPem = `-----BEGIN PUBLIC KEY-----
-YWJj
------END PUBLIC KEY-----
-`
-    const testPrivateKeyPem = `-----BEGIN PRIVATE KEY-----
-YWJj
------END PRIVATE KEY-----
-`
-
-    t.test('decodePublicKeyPem', async t => {
-      const decoded = wcb.decodePublicKeyPem(testPublicKeyPem)
-      t.type(decoded, 'Uint8Array')
-      t.same(decoded, testData)
-    })
-
-    t.test('encodePublicKeyPem', async t => {
-      const encoded = wcb.encodePublicKeyPem(testData)
-      t.type(encoded, 'string')
-      t.same(encoded, testPublicKeyPem)
-    })
-
-    t.test('decodePrivateKeyPem', async t => {
-      const decoded = wcb.decodePrivateKeyPem(testPrivateKeyPem)
-      t.type(decoded, 'Uint8Array')
-      t.same(decoded, testData)
-    })
-
-    t.test('encodePrivateKeyPem', async t => {
-      const encoded = wcb.encodePrivateKeyPem(testData)
-      t.type(encoded, 'string')
-      t.same(encoded, testPrivateKeyPem)
-    })
-  })
-
   g.test('key generation', async t => {
     t.test('generateKeyPair', async t => {
       const { publicKey, privateKey } = await wcb.generateKeyPair()

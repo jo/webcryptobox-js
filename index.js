@@ -43,6 +43,33 @@ export const utils = {
   // encode data as base64 string
   encodeBase64: data => {
     return btoa(String.fromCharCode(...new Uint8Array(data)))
+  },
+
+  // decode public ecdh key pem
+  decodePublicKeyPem: pem => {
+    return utils.decodeBase64(pem.trim().slice(27, -25).replace(/\n/g, ''))
+  },
+
+  // encode public ecdh key as pem
+  encodePublicKeyPem: data => {
+    const base64 = utils.encodeBase64(data).match(/.{1,64}/g).join('\n')
+    return `-----BEGIN PUBLIC KEY-----
+${base64}
+-----END PUBLIC KEY-----
+`
+  },
+
+  // decode private ecdh key pem
+  decodePrivateKeyPem: pem => {
+    return utils.decodeBase64(pem.trim().slice(28, -26).replace(/\n/g, ''))
+  },
+
+  // encode private ecdh key as pem
+  encodePrivateKeyPem: data => {
+    return `-----BEGIN PRIVATE KEY-----
+${utils.encodeBase64(data).match(/.{1,64}/g).join('\n')}
+-----END PRIVATE KEY-----
+`
   }
 }
 
@@ -73,35 +100,6 @@ export class Webcryptobox {
     this.ivLength = mode === 'CBC' ? 16 : 12
   }
 
-
-  // encoding & decoding
-
-  // decode public ecdh key pem
-  decodePublicKeyPem (pem) {
-    return utils.decodeBase64(pem.trim().slice(27, -25).replace(/\n/g, ''))
-  }
-
-  // encode public ecdh key as pem
-  encodePublicKeyPem (data) {
-    const base64 = utils.encodeBase64(data).match(/.{1,64}/g).join('\n')
-    return `-----BEGIN PUBLIC KEY-----
-${base64}
------END PUBLIC KEY-----
-`
-  }
-
-  // decode private ecdh key pem
-  decodePrivateKeyPem (pem) {
-    return utils.decodeBase64(pem.trim().slice(28, -26).replace(/\n/g, ''))
-  }
-
-  // encode private ecdh key as pem
-  encodePrivateKeyPem (data) {
-    return `-----BEGIN PRIVATE KEY-----
-${utils.encodeBase64(data).match(/.{1,64}/g).join('\n')}
------END PRIVATE KEY-----
-`
-  }
 
 
   // key generation
@@ -203,7 +201,7 @@ ${utils.encodeBase64(data).match(/.{1,64}/g).join('\n')}
   // convenient helper to export public ecdh key directly as pem
   async exportPublicKeyPem (publicKey) {
     const data = await this.exportPublicKey(publicKey)
-    return this.encodePublicKeyPem(data)
+    return utils.encodePublicKeyPem(data)
   }
 
   // import a public ecdh key spki
@@ -219,7 +217,7 @@ ${utils.encodeBase64(data).match(/.{1,64}/g).join('\n')}
 
   // convenient helper to import public ecdh pem directly
   importPublicKeyPem (pem) {
-    const data = this.decodePublicKeyPem(pem)
+    const data = utils.decodePublicKeyPem(pem)
     return this.importPublicKey(data)
   }
 
@@ -234,7 +232,7 @@ ${utils.encodeBase64(data).match(/.{1,64}/g).join('\n')}
   // convenient helper to export private ecdh key directly as pem
   async exportPrivateKeyPem (privateKey) {
     const data = await this.exportPrivateKey(privateKey)
-    return this.encodePrivateKeyPem(data)
+    return utils.encodePrivateKeyPem(data)
   }
 
   // import a private ecdh key pkcs8
@@ -250,7 +248,7 @@ ${utils.encodeBase64(data).match(/.{1,64}/g).join('\n')}
 
   // convenient helper to import private ecdh pem directly
   importPrivateKeyPem (pem) {
-    const data = this.decodePrivateKeyPem(pem)
+    const data = utils.decodePrivateKeyPem(pem)
     return this.importPrivateKey(data)
   }
 

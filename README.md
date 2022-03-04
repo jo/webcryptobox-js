@@ -156,84 +156,72 @@ const base64 = utils.encodeBase64(new Uint8Array([
 // bXkgbWVzc2FnZQ==
 ```
 
-### Dealing with PEMs
+#### Dealing with PEMs
 PEM are common formats for exchaning keys.
 
-#### `decodePrivateKeyPem`
+##### `decodePrivateKeyPem`
 Given private key data, encodes it as a pem.
 
 ```js
 const { privateKey } = await wcb.generateKeyPair()
 const privateKeyData = await wcb.exportPrivateKey(privateKey)
-const pem = wcb.encodePrivateKeyPem(privateKeyData)
+const pem = utils.encodePrivateKeyPem(privateKeyData)
 // -----BEGIN PRIVATE KEY-----
-// MIHuAgEAMBAGByqGSM49AgEGBSuBBAAjBIHWMIHTAgEBBEIAaaRXNmPnb4NPvB8iF+FuNJEaztFIuU3S
-// DcL8WFuUymIB2HH4XQZVvR/w5fi+sxbM/BpdX23nYp1D20hEEAdx/ZuhgYkDgYYABAE3i9CbMEJtSCDq
-// en0An/S67viMIJLoslNHgOGbfvp8W4EE24vQtBH3bM+nNhDFgTMDKDYLreHWfQwYH/6hQR4vNQEPHr7A
-// UwJwZ0oYtpbkt0P3W1qpHtxJF8WEZf+6Bms3tMZeUa4nhugqO1fq3ssXSx5bC6Ma7AW+dRmGVq60w/x8
-// LA==
+// MIHuAgEAMBAGByqGSM49AgEGBSuBBAAjBIHWMIHTAgEBBEIBcf8zEjlssqn4aTEB
+// RR43ofwH/4BAXDAAd83Kz1Dyd+Ko0pit4ESgqSu/bJMdnDrpiGYuz0Klarwip8LD
+// rYd9mEahgYkDgYYABAF2Nu9XKPs2CVFocuqCfaX5FzDUt6/nT/3Evqq8jBhK/ziN
+// TrEs4wkZjuei5TS25aabX6iMex3etoN/GOw1KYpI4QBtIUnWudG8FT8N+USHSL9G
+// h9fi+Yofeq4Io9DxPU1ChCKPIoQ6ORAMWoOCk9bTdIy6yqx33+RIM04wub4QAgDo
+// LQ==
 // -----END PRIVATE KEY-----
 ```
 
-#### `encodePrivateKeyPem`
+##### `encodePrivateKeyPem`
 Returns the Uint8Array data of a private key for a pem.
 
 ```js
-const data = wcb.encodePrivateKeyPem(`-----BEGIN PRIVATE KEY-----
-MIHuAgEAMBAGByqGSM49AgEGBSuBBAAjBIHWMIHTAgEBBEIAaaRXNmPnb4NPvB8iF+FuNJEaztFIuU3S
-DcL8WFuUymIB2HH4XQZVvR/w5fi+sxbM/BpdX23nYp1D20hEEAdx/ZuhgYkDgYYABAE3i9CbMEJtSCDq
-en0An/S67viMIJLoslNHgOGbfvp8W4EE24vQtBH3bM+nNhDFgTMDKDYLreHWfQwYH/6hQR4vNQEPHr7A
-UwJwZ0oYtpbkt0P3W1qpHtxJF8WEZf+6Bms3tMZeUa4nhugqO1fq3ssXSx5bC6Ma7AW+dRmGVq60w/x8
-LA==
+const data = utils.encodePrivateKeyPem(`-----BEGIN PRIVATE KEY-----
+MIHuAgEAMBAGByqGSM49AgEGBSuBBAAjBIHWMIHTAgEBBEIBcf8zEjlssqn4aTEB
+RR43ofwH/4BAXDAAd83Kz1Dyd+Ko0pit4ESgqSu/bJMdnDrpiGYuz0Klarwip8LD
+rYd9mEahgYkDgYYABAF2Nu9XKPs2CVFocuqCfaX5FzDUt6/nT/3Evqq8jBhK/ziN
+TrEs4wkZjuei5TS25aabX6iMex3etoN/GOw1KYpI4QBtIUnWudG8FT8N+USHSL9G
+h9fi+Yofeq4Io9DxPU1ChCKPIoQ6ORAMWoOCk9bTdIy6yqx33+RIM04wub4QAgDo
+LQ==
 -----END PRIVATE KEY-----`)
 // int8Array(241) [
-//    48, 129, 238,   2,   1,   0,  48,  16,   6,   7,  42, 134,
-//    72, 206,  61,   2,   1,   6,   5,  43, 129,   4,   0,  35,
-//     4, 129, 214,  48, 129, 211,   2,   1,   1,   4,  66,   0,
-//    55,  90, 211,  22, 241,  55,  47,  56, 191,  19,  68, 146,
-//    28, 179, 129,  11, 112,  89, 212, 152, 136, 249, 122,  99,
-//   222,  28,  90, 143, 116, 143, 141, 144,  79,  61, 149, 244,
-//    10,  64, 194, 177, 173, 134, 144,  69,  11, 156, 156,   2,
-//   220,  97,  61,  30,  22, 201, 130, 186, 246, 245, 254,   9,
-//    84, 217, 200, 244,
-//   ... 141 more items
+//    48, 129, 238, 2, 1, 0, 48, 16, 6, 7, 42, 134,
+//   ... more items
 // ]
 ```
 
-#### `decodePublicKeyPem`
+##### `decodePublicKeyPem`
 Given public key data, encodes it as a pem.
 
 ```js
 const { publicKey } = await wcb.generateKeyPair()
 const publicKeyData = await wcb.exportPublicKey(publicKey)
-const pem = wcb.encodePublicKeyPem(publicKeyData)
+const pem = utils.encodePublicKeyPem(publicKeyData)
 // -----BEGIN PUBLIC KEY-----
-// MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQBpsg9VAkqNoSEHcP1HiC12clzfCH4vqCo5067wsltUlPS
-// qKr22n8+ClNNYINKvWP0cGg4Z7cTxqnus3CpAMAvZTEAUfbLZOm/WGwrPxdY2IDy8UQcUvDU/N8Q5xiP
-// 18dqrijI4M/RDpjYsz7BZAg+UvaWtD6EJBK0/rgppo3rNxsEK7I=
+// MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQBdjbvVyj7NglRaHLqgn2l+Rcw1Lev
+// 50/9xL6qvIwYSv84jU6xLOMJGY7nouU0tuWmm1+ojHsd3raDfxjsNSmKSOEAbSFJ
+// 1rnRvBU/DflEh0i/RofX4vmKH3quCKPQ8T1NQoQijyKEOjkQDFqDgpPW03SMusqs
+// d9/kSDNOMLm+EAIA6C0=
 // -----END PUBLIC KEY-----
 ```
 
-#### `encodePublicKeyPem`
+##### `encodePublicKeyPem`
 Returns the Uint8Array data of a public key for a pem.
 
 ```js
-const data = wcb.encodePublicKeyPem(`-----BEGIN PUBLIC KEY-----
-MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQBpsg9VAkqNoSEHcP1HiC12clzfCH4vqCo5067wsltUlPS
-qKr22n8+ClNNYINKvWP0cGg4Z7cTxqnus3CpAMAvZTEAUfbLZOm/WGwrPxdY2IDy8UQcUvDU/N8Q5xiP
-18dqrijI4M/RDpjYsz7BZAg+UvaWtD6EJBK0/rgppo3rNxsEK7I=
+const data = utils.encodePublicKeyPem(`-----BEGIN PUBLIC KEY-----
+MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQBdjbvVyj7NglRaHLqgn2l+Rcw1Lev
+50/9xL6qvIwYSv84jU6xLOMJGY7nouU0tuWmm1+ojHsd3raDfxjsNSmKSOEAbSFJ
+1rnRvBU/DflEh0i/RofX4vmKH3quCKPQ8T1NQoQijyKEOjkQDFqDgpPW03SMusqs
+d9/kSDNOMLm+EAIA6C0=
 -----END PUBLIC KEY-----`)
 // Uint8Array(158) [
-//    48, 129, 155,  48,  16,   6,   7,  42, 134,  72, 206,  61,
-//     2,   1,   6,   5,  43, 129,   4,   0,  35,   3, 129, 134,
-//     0,   4,   0, 174,  43,   0, 227,  67,  88,  84,  45, 187,
-//   100, 205, 177, 191, 139, 129, 119,  57,   6, 200, 236, 175,
-//   231, 171, 246,   1, 173,  29,  64, 138,   5, 219, 173,  69,
-//     4, 234, 158, 197,   6,  90,  40, 235, 186, 112, 125, 139,
-//   144, 223, 156, 109, 233, 209, 104,  52,  56,  90, 109,  78,
-//   204, 241, 164,   6, 253, 157, 117, 237,   1, 196, 109, 208,
-//    71,   5, 199,   3,
-//   ... 58 more items
+//    48, 129, 155, 48, 16, 6, 7, 42, 134, 72, 206, 61,
+//   ... more items
 // ]
 ```
 
@@ -335,7 +323,7 @@ Exports aes key data as ArrayBuffer
 const key = await wcb.generateKey()
 const data = await wcb.exportKey(key)
 // ArrayBuffer {
-//   [Uint8Contents]: <ac 54 d5 01 74 ca d6 87 f5 65 18 d0 4f e4 0f 18 77 7c 53 74 79 c1 a7 4d 83 f6 9a 1a 10 90 06 32>,
+//   [Uint8Contents]: <ac 54 d5 01 74 ca d6 87 f5 65 18 d0 4f e4 0f 18 77 ... more bytes>,
 //   byteLength: 32
 // }
 ```
@@ -345,7 +333,8 @@ Import aes key data, returns CryptoKey:
 
 ```js
 const data = new Uint8Array([
-  210, 29, 179, 47, 204, 90, 109, 111, 95, 64, 50, 48, 192, 105, 44, 236, 74, 120, 2, 193, 83, 122, 22, 99, 202, 73, 20, 23, 187, 160, 140, 112
+  210, 29, 179, 47, 204, 90, 109, 111, 95, 64, 50, 48, 192, 105, 44, 236,
+  74, 120, 2, 193, 83, 122, 22, 99, 202, 73, 20, 23, 187, 160, 140, 112
 ])
 const key = await wcb.importKey(data)
 // CryptoKey {
@@ -363,7 +352,7 @@ Exports private key data as ArrayBuffer
 const { privateKey } = await wcb.generateKeyPair()
 const data = await wcb.exportPrivateKey(privateKey)
 // ArrayBuffer {
-//   [Uint8Contents]: <30 81 ee 02 01 00 30 10 06 07 2a 86 48 ce 3d 02 01 06 05 2b 81 04 00 23 04 81 d6 30 81 d3 02 01 01 04 42 00 7c ae 23 7e e5 88 eb 93 93 f9 9e a7 d3 16 3c 9c cd 18 f6 a5 72 d9 04 21 28 05 9b 11 a7 ae e8 81 7b 26 a3 97 96 7c f4 97 54 c7 d5 db c2 ae 04 d7 86 03 f0 92 c1 87 35 90 53 10 a7 6f d4 f3 4f f8 ... 141 more bytes>,
+//   [Uint8Contents]: <30 81 ee 02 01 00 30 10 06 07 2a 86 48 ce 3d 02 01 ... more bytes>,
 //   byteLength: 241
 // }
 ```
@@ -390,7 +379,7 @@ Exports public key data as ArrayBuffer
 const { publicKey } = await wcb.generateKeyPair()
 const data = await wcb.exportPublicKey(publicKey)
 // ArrayBuffer {
-//   [Uint8Contents]: <30 81 9b 30 10 06 07 2a 86 48 ce 3d 02 01 06 05 2b 81 04 00 23 03 81 86 00 04 00 27 60 ca ed ba a7 a9 81 2b 29 58 fd b5 14 ce 51 82 dc 8b c2 0e cf 03 15 12 a6 a5 d5 7b 08 ea 55 d1 cd 28 20 8e 8e c3 ee 81 4c 15 85 05 f5 45 af 6e d9 0a 67 dc 5c 24 0a 7d 6c f3 bb 42 fe fe 17 15 00 78 bf e3 ff f0 9b e2 ... 58 more bytes>,
+//   [Uint8Contents]: <30 81 9b 30 10 06 07 2a 86 48 ce 3d 02 01 06 05 2b ... more bytes>,
 //   byteLength: 158
 // }
 ```
@@ -417,7 +406,12 @@ Utility function to export a private key as pem:
 const { privateKey } = await wcb.generateKeyPair()
 const pem = await wcb.exportPrivateKeyPem(privateKey)
 // -----BEGIN PRIVATE KEY-----
-// MIHuAgEAMBAGByqGSM49AgEGBSuBBAAjBIHWMIHTAgEBBEIADL2kTtM5abY6q93yTYFL+wWYAORVDEqU3hxy2DGetX61p8I1gNlxCQZ+R+O+il9MicFsxOeXq7duot1kpsPTzmmhgYkDgYYABAAHLtBwbSs5O7X0YMFywmkcEzB4nWrOFj3eL7MW2LXVf91HfAawwwlay5LpELiwRS1H9woqYK5PVjIwj/elKGbWJQDtiDqcCdfaOOuEBaZBbgTMVTTpKjJ5sKmwN8Z6blsNDgCqlF10H2/PWGSFOkWxxMP8xjeZoBwrmh5INaR19h/Qng==
+// MIHuAgEAMBAGByqGSM49AgEGBSuBBAAjBIHWMIHTAgEBBEIBcf8zEjlssqn4aTEB
+// RR43ofwH/4BAXDAAd83Kz1Dyd+Ko0pit4ESgqSu/bJMdnDrpiGYuz0Klarwip8LD
+// rYd9mEahgYkDgYYABAF2Nu9XKPs2CVFocuqCfaX5FzDUt6/nT/3Evqq8jBhK/ziN
+// TrEs4wkZjuei5TS25aabX6iMex3etoN/GOw1KYpI4QBtIUnWudG8FT8N+USHSL9G
+// h9fi+Yofeq4Io9DxPU1ChCKPIoQ6ORAMWoOCk9bTdIy6yqx33+RIM04wub4QAgDo
+// LQ==
 // -----END PRIVATE KEY-----
 ```
 
@@ -426,7 +420,12 @@ Given a pem of a private key, returns the CryptoKey:
 
 ```js
 const privateKey = await wcb.importPrivateKeyPem(`-----BEGIN PRIVATE KEY-----
-MIHuAgEAMBAGByqGSM49AgEGBSuBBAAjBIHWMIHTAgEBBEIADL2kTtM5abY6q93yTYFL+wWYAORVDEqU3hxy2DGetX61p8I1gNlxCQZ+R+O+il9MicFsxOeXq7duot1kpsPTzmmhgYkDgYYABAAHLtBwbSs5O7X0YMFywmkcEzB4nWrOFj3eL7MW2LXVf91HfAawwwlay5LpELiwRS1H9woqYK5PVjIwj/elKGbWJQDtiDqcCdfaOOuEBaZBbgTMVTTpKjJ5sKmwN8Z6blsNDgCqlF10H2/PWGSFOkWxxMP8xjeZoBwrmh5INaR19h/Qng==
+MIHuAgEAMBAGByqGSM49AgEGBSuBBAAjBIHWMIHTAgEBBEIBcf8zEjlssqn4aTEB
+RR43ofwH/4BAXDAAd83Kz1Dyd+Ko0pit4ESgqSu/bJMdnDrpiGYuz0Klarwip8LD
+rYd9mEahgYkDgYYABAF2Nu9XKPs2CVFocuqCfaX5FzDUt6/nT/3Evqq8jBhK/ziN
+TrEs4wkZjuei5TS25aabX6iMex3etoN/GOw1KYpI4QBtIUnWudG8FT8N+USHSL9G
+h9fi+Yofeq4Io9DxPU1ChCKPIoQ6ORAMWoOCk9bTdIy6yqx33+RIM04wub4QAgDo
+LQ==
 -----END PRIVATE KEY-----`)
 // CryptoKey {
 //   type: 'private',
@@ -443,7 +442,10 @@ Utility function to export a public key as pem:
 const { publicKey } = await wcb.generateKeyPair()
 const pem = await wcb.exportPublicKeyPem(publicKey)
 // -----BEGIN PUBLIC KEY-----
-// MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQAjHH6XfHQpYpdQVH3xGcnQ5MpIMXbwJNnYakhXNTyY5a7eb0EkfUPxMFcBobCb9TNL/ESYQnY0QhMufayklhPUYMAOoEgyE3wNV1owlq5qY3xH3oNkwe1QOGVgdV7+3CBLACsTCv4BFcQ34BJfeYywssNfO5ZRy4+WJJSDnGCGxio+b0=
+// MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQBdjbvVyj7NglRaHLqgn2l+Rcw1Lev
+// 50/9xL6qvIwYSv84jU6xLOMJGY7nouU0tuWmm1+ojHsd3raDfxjsNSmKSOEAbSFJ
+// 1rnRvBU/DflEh0i/RofX4vmKH3quCKPQ8T1NQoQijyKEOjkQDFqDgpPW03SMusqs
+// d9/kSDNOMLm+EAIA6C0=
 // -----END PUBLIC KEY-----
 ```
 
@@ -452,7 +454,10 @@ Given a pem of a public key, returns the CryptoKey:
 
 ```js
 const publicKey = await wcb.importPublicKeyPem(`-----BEGIN PUBLIC KEY-----
-MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQAjHH6XfHQpYpdQVH3xGcnQ5MpIMXbwJNnYakhXNTyY5a7eb0EkfUPxMFcBobCb9TNL/ESYQnY0QhMufayklhPUYMAOoEgyE3wNV1owlq5qY3xH3oNkwe1QOGVgdV7+3CBLACsTCv4BFcQ34BJfeYywssNfO5ZRy4+WJJSDnGCGxio+b0=
+MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQBdjbvVyj7NglRaHLqgn2l+Rcw1Lev
+50/9xL6qvIwYSv84jU6xLOMJGY7nouU0tuWmm1+ojHsd3raDfxjsNSmKSOEAbSFJ
+1rnRvBU/DflEh0i/RofX4vmKH3quCKPQ8T1NQoQijyKEOjkQDFqDgpPW03SMusqs
+d9/kSDNOMLm+EAIA6C0=
 -----END PUBLIC KEY-----`)
 // CryptoKey {
 //   type: 'public',
