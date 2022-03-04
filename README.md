@@ -3,7 +3,7 @@ Tiny utility library for asymetric encryption via WebCrypto with zero dependenci
 
 > I don't usually do libraries any more but when I do, it's mainly for educational purposes.
 
-Demo: https://jo.github.io/webcryptobox/
+Demo: https://jo.github.io/webcryptobox-js/
 
 This is a small opiniated wrapper around the [WebCrypto](https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API) API. When I first started to get into WebCrypto, coming from NaCl it felt a little difficult to me to get things right. Here I encapsulate my learnings. Before WebCrypto, I used [TweetNaCl.js](https://github.com/dchest/tweetnacl-js) a lot. I really liked its simplicity, and the choices it (and NaCl in general) made for me. Now I offer to you similar choices on encryption algorithms, but using the browser native WebCrypto instead. This library provides part of the functionality I liked when using TweetNaCl.
 
