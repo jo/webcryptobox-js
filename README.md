@@ -492,7 +492,7 @@ const text = 'my message'
 const message = utils.decodeText(text)
 const data = await wcb.encrypt({ message, iv, key })
 // ArrayBuffer {
-//   [Uint8Contents]: <95 e1 e9 d4 72 74 27 6b b3 e3 e3 79 9e c3 dd f0 8a cc 70 72 73 a2 dc 66 e7 cd>,
+//   [Uint8Contents]: <95 e1 e9 d4 72 74 27 6b b3 e3 e3 79 9e c3 dd f0 8a ... more bytes>,
 //   byteLength: 26
 // }
 ```
@@ -525,7 +525,7 @@ const text = 'my message'
 const message = utils.decodeText(text)
 const data = await wcb.deriveAndEncrypt({ message, iv, privateKey, publicKey })
 // ArrayBuffer {
-//   [Uint8Contents]: <e3 93 88 af 9a 48 eb 44 cc a7 d1 11 ca 66 33 a2 31 04 b4 68 cb 9f dd 01 40 73>,
+//   [Uint8Contents]: <e3 93 88 af 9a 48 eb 44 cc a7 d1 11 ca 66 33 a2 31 ... more bytes>,
 //   byteLength: 26
 // }
 ```
