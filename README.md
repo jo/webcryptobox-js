@@ -1,4 +1,4 @@
-# WebCryptoBox
+# Webcryptobox
 Tiny utility library for asymetric encryption via WebCrypto with zero dependencies.
 
 > I don't usually do libraries any more but when I do, it's mainly for educational purposes.
@@ -11,6 +11,7 @@ This library provides easy to use and convenient wrappers around the WebCrypto p
 
 It works directly in the browser and in latest Node.js versions (via [the experimental WebCrypto API](https://nodejs.org/api/webcrypto.html)).
 
+
 ## Usage
 In Node, you can use the lib as usual:
 ```sh
@@ -19,58 +20,75 @@ npm install webcryptobox
 
 and then
 ```js
-import * as wcb from 'webcryptobox'
+import { utils, Webcryptobox } from 'webcryptobox'
 ```
 
 In modern browser which support es6 modules, just include the file directly:
 ```html
 <script type=module>
-  import * as wcb from './´webcryptobox.js'
+  import { utils, Webcryptobox } from './´webcryptobox.js'
 </script>
 ```
 
 Now you can dance with the lib like its 1984:
 ```js
+const wcb = new Webcryptobox()
 const { privateKey, publicKey } = await wcb.generateKeyPair()
 const text = 'Nobody else can offer me something, something heart felt like you did it!'
-const message = wcb.decodeText(text)
+const message = utils.decodeText(text)
 const iv = wcb.generateIv()
 const box = await wcb.deriveAndEncrypt({ message, iv, privateKey, publicKey })
 ```
 
-## API
-The API is pretty straightforward. Look at the [tests](test/index.js) to see examples. I've also included a little [html page](index.html) to see it in action.
 
+## API
 This lib is written with some ECMAScript 6 features, mainly modules, dynamic import, async, destructuring and object spreading.
 
-Most of the functions return promises.
+Most of the functions return promises. Webcryptobox comes with two exports: `utils` and `Webcryptobox`. The first provides some convenient functions for dealing with encoding and decoding (base64, hex, text). The `Webcryptobox` class provides the crypto functions and must be initialized like described below:
 
 ### Crypto Algorithm Configuration
-The crypto primitives are configured as below:
+Initialize Webcryptobox with a crypto configuration:
 
+* `curve`: ECDH named curve. Default is `P-521`
+* `mode`: AES mode. Default is `GCM`
+* `length`: AES key length. Default is `256`
+
+Eg:
 ```js
-const ecParams = {
-  name: 'ECDH',
-  namedCurve: 'P-521'
-}
-const aesParams = {
-  name: 'AES-GCM',
+const wcb = new Webcryptobox({
+  curve: 'P-521',
+  mode: 'GCM',
   length: 256
-}
+})
 ```
 
-This means we're supporting Elliptic Curve Diffie Helmann keys with the NIST curve `P-521` and use the `AES-GCM` cypher with a key length of 256, which gives use authenticated AES encryption.
+Above are the defaults, so its the same as:
+```js
+const wcb = new Webcryptobox()
+```
 
-You can find the examples used in the API documentation in [test/examples.js](test/examples.js).
+#### Supported Curves
+* `P-256`: 256-bit prime field Weierstrass curve. Also known as `secp256r1` or `prime256v1`.
+* `P-384`: 384-bit prime field Weierstrass curve. Also known as: `secp384r1` or `ansip384r1`.
+* `P-521`: 521-bit prime field Weierstrass curve. Also known as: `secp521r1` or `ansip521r1`.
 
-### Encoding & Decoding
-WebCryptoBox provides utility functions to convert between several text representations and the internally used `Uint8Array`s.
+#### Supported Modes
+* `CBC`: Cipher Block Chaining Mode
+* `GCM`: Galois/Counter Mode
+
+#### Supported Length
+* `128`
+* `256`
+
+
+### Utils for Encoding & Decoding
+Webcryptobox provides utility functions to convert between several text representations and the internally used `Uint8Array`s.
 
 #### `decodeText`
 Takes an unicode string and encodes it to an Uint8Array:
 
 ```js
-const data = wcb.decodeText('my message')
+const data = utils.decodeText('my message')
 // Uint8Array(10) [
 //   109, 121,  32, 109,
 //   101, 115, 115,  97,
@@ -82,7 +100,7 @@ const data = wcb.decodeText('my message')
 Given a Uint8Array, encodes the data as unicode string:
 
 ```js
-const text = wcb.encodeText(new Uint8Array([
+const text = utils.encodeText(new Uint8Array([
   109, 121,  32, 109,
   101, 115, 115,  97,
   103, 101
@@ -94,7 +112,7 @@ const text = wcb.encodeText(new Uint8Array([
 Takes a hex string and encodes it to an Uint8Array:
 
 ```js
-const data = wcb.decodeHex('6d79206d657373616765')
+const data = utils.decodeHex('6d79206d657373616765')
 // Uint8Array(10) [
 //   109, 121,  32, 109,
 //   101, 115, 115,  97,
@@ -106,7 +124,7 @@ const data = wcb.decodeHex('6d79206d657373616765')
 Given a Uint8Array, encodes the data as hex string:
 
 ```js
-const hex = wcb.encodeHex(new Uint8Array([
+const hex = utils.encodeHex(new Uint8Array([
   109, 121,  32, 109,
   101, 115, 115,  97,
   103, 101
@@ -114,12 +132,11 @@ const hex = wcb.encodeHex(new Uint8Array([
 // 6d79206d657373616765
 ```
 
-
 #### `decodeBase64`
 Takes a base64 string and encodes it to an Uint8Array:
 
 ```js
-const data = wcb.decodeBase64('bXkgbWVzc2FnZQ==')
+const data = utils.decodeBase64('bXkgbWVzc2FnZQ==')
 // Uint8Array(10) [
 //   109, 121,  32, 109,
 //   101, 115, 115,  97,
@@ -131,13 +148,16 @@ const data = wcb.decodeBase64('bXkgbWVzc2FnZQ==')
 Given a Uint8Array, encodes the data as base64 string:
 
 ```js
-const base64 = wcb.encodeBase64(new Uint8Array([
+const base64 = utils.encodeBase64(new Uint8Array([
   109, 121,  32, 109,
   101, 115, 115,  97,
   103, 101
 ]))
 // bXkgbWVzc2FnZQ==
 ```
+
+### Dealing with PEMs
+PEM are common formats for exchaning keys.
 
 #### `decodePrivateKeyPem`
 Given private key data, encodes it as a pem.
@@ -218,7 +238,7 @@ qKr22n8+ClNNYINKvWP0cGg4Z7cTxqnus3CpAMAvZTEAUfbLZOm/WGwrPxdY2IDy8UQcUvDU/N8Q5xiP
 ```
 
 ### Key Generation and Derivation
-Functions for generating a ecdh and aes-gcm keys, for deriving an aes-gcm key or the public key from a private one and for generating a sha-256 fingerprint of a key.
+Functions for generating a ecdh and aes-cbc keys, for deriving an aes-cbc key or the public key from a private one and for generating a sha-256 fingerprint of a key.
 
 #### `generateKeyPair`
 Generates ecdh key pair with curve `P-521`. The private key will be extractable, and can be used to derive a key.
@@ -242,7 +262,7 @@ const keyPair = await wcb.generateKeyPair()
 ```
 
 #### `generateKey`
-Generate aes-gcm key with a length of 256. The key will be extractable and can be used for encryption and decryption.
+Generate aes-cbc key with a length of 256. The key will be extractable and can be used for encryption and decryption.
 
 ```js
 const key = await wcb.generateKey()
@@ -255,7 +275,7 @@ const key = await wcb.generateKey()
 ```
 
 #### `deriveKey`
-Given a private and a public key, this function derives an aes-gcm key. For two key pairs `A` and `B`, the derived key will be the same for
+Given a private and a public key, this function derives an aes-cbc key. For two key pairs `A` and `B`, the derived key will be the same for
 `deriveKey({ privateKey: A.privateKey, publicKey: B.publicKey })` and `deriveKey({ privateKey: B.privateKey, publicKey: A.publicKey })`.
 
 ```js
@@ -264,7 +284,7 @@ const { publicKey } = await wcb.generateKeyPair()
 const key = await wcb.deriveKey({ privateKey, publicKey })
 // CryptoKey {
 //   type: 'secret',
-//   extractable: false,
+//   extractable: true,
 //   algorithm: { name: 'AES-GCM', length: 256 },
 //   usages: [ 'encrypt', 'decrypt' ]
 // }
@@ -284,29 +304,60 @@ const publicKey = await wcb.derivePublicKey(privateKey)
 // }
 ```
 
-#### `generateSha256Fingerprint`
+### Fingerprinting
+Methods for calculating fingerprints of public keys. Note that the fingerprints differ from the fingerprints from `ssh-keygen`.
+
+#### `sha256Fingerprint`
 Calculate a SHA-256 fingerprint of a key. It has a length of 64 hex chars.
 
 ```js
 const { publicKey } = await wcb.generateKeyPair()
-const fingerprint = wcb.generateSha256Fingerprint(publicKey)
+const fingerprint = wcb.sha256Fingerprint(publicKey)
 // aca8f766cdef8346177987a86b0f04b14fd4060b0e2478f941adc91982d6668c
 ```
 
-#### `generateSha1Fingerprint`
+#### `sha1Fingerprint`
 Calculate a SHA-1 fingerprint of a key. It has a length of 40 hex chars.
 
 ```js
 const { publicKey } = await wcb.generateKeyPair()
-const fingerprint = wcb.generateSha1Fingerprint(publicKey)
+const fingerprint = wcb.sha1Fingerprint(publicKey)
 // d04f73b7eb0b865a8d4711b5a379273a27c65581
 ```
 
 ### Key Import and Export
 Tools for exchanging keys. Also comes with convenient helpers to deal with PEM formatted keys.
 
+#### `exportKey`
+Exports aes key data as ArrayBuffer
+
+```js
+const key = await wcb.generateKey()
+const data = await wcb.exportKey(key)
+// ArrayBuffer {
+//   [Uint8Contents]: <ac 54 d5 01 74 ca d6 87 f5 65 18 d0 4f e4 0f 18 77 7c 53 74 79 c1 a7 4d 83 f6 9a 1a 10 90 06 32>,
+//   byteLength: 32
+// }
+```
+
+#### `importKey`
+Import aes key data, returns CryptoKey:
+
+```js
+const data = new Uint8Array([
+  210, 29, 179, 47, 204, 90, 109, 111, 95, 64, 50, 48, 192, 105, 44, 236, 74, 120, 2, 193, 83, 122, 22, 99, 202, 73, 20, 23, 187, 160, 140, 112
+])
+const key = await wcb.importKey(data)
+// CryptoKey {
+//   type: 'secret',
+//   extractable: true,
+//   algorithm: { name: 'AES-GCM', length: 256 },
+//   usages: [ 'encrypt', 'decrypt' ]
+// }
+```
+
 #### `exportPrivateKey`
-Exports private key data as Uint8Array (in fact, its actually a ArrayBuffer)
+Exports private key data as ArrayBuffer
 
 ```js
 const { privateKey } = await wcb.generateKeyPair()
@@ -333,7 +384,7 @@ const importedPrivateKey = await wcb.importPrivateKey(data)
 ```
 
 #### `exportPublicKey`
-Exports public key data as Uint8Array (in fact, its actually a ArrayBuffer)
+Exports public key data as ArrayBuffer
 
 ```js
 const { publicKey } = await wcb.generateKeyPair()
@@ -412,7 +463,7 @@ MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQAjHH6XfHQpYpdQVH3xGcnQ5MpIMXbwJNnYakhXNTyY5a7
 ```
 
 ### Encryption and Decryption
-Encrypt and decrypt a message with aes-gcm. Also comes with helper functions to directly provide asymetric keys.
+Encrypt and decrypt a message with aes-cbc. Also comes with helper functions to directly provide asymetric keys.
 
 #### `generateIv`
 Creata a random initialization vector for use with encryption:
@@ -427,13 +478,13 @@ const iv = wcb.generateIv()
 ```
 
 #### `encrypt`
-Encrypts a message with aes-gcm:
+Encrypts a message with aes-cbc:
 
 ```js
 const key = await wcb.generateKey()
 const iv = wcb.generateIv()
 const text = 'my message'
-const message = wcb.decodeText(text)
+const message = utils.decodeText(text)
 const data = await wcb.encrypt({ message, iv, key })
 // ArrayBuffer {
 //   [Uint8Contents]: <95 e1 e9 d4 72 74 27 6b b3 e3 e3 79 9e c3 dd f0 8a cc 70 72 73 a2 dc 66 e7 cd>,
@@ -449,7 +500,7 @@ const key = await wcb.generateKey()
 const iv = wcb.generateIv()
 
 const text = 'my message'
-const message = wcb.decodeText(text)
+const message = utils.decodeText(text)
 const box = await wcb.encrypt({ message, iv, key })
 
 const data = await wcb.decrypt({ box, iv, key })
@@ -460,13 +511,13 @@ const data = await wcb.decrypt({ box, iv, key })
 ```
 
 #### `deriveAndEncrypt`
-Encrypts a message with aes-gcm for given private and public ecdh key:
+Encrypts a message with aes-cbc for given private and public ecdh key:
 
 ```js
 const { privateKey, publicKey } = await wcb.generateKeyPair()
 const iv = wcb.generateIv()
 const text = 'my message'
-const message = wcb.decodeText(text)
+const message = utils.decodeText(text)
 const data = await wcb.deriveAndEncrypt({ message, iv, privateKey, publicKey })
 // ArrayBuffer {
 //   [Uint8Contents]: <e3 93 88 af 9a 48 eb 44 cc a7 d1 11 ca 66 33 a2 31 04 b4 68 cb 9f dd 01 40 73>,
@@ -482,7 +533,7 @@ const { privateKey, publicKey } = await wcb.generateKeyPair()
 const iv = wcb.generateIv()
 
 const text = 'my message'
-const message = wcb.decodeText(text)
+const message = utils.decodeText(text)
 const box = await wcb.deriveAndEncrypt({ message, iv, privateKey, publicKey })
 
 const data = await wcb.deriveAndDecrypt({ box, iv, privateKey, publicKey })
