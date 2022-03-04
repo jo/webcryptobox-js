@@ -552,7 +552,9 @@ const data = await wcb.deriveAndDecrypt({ box, iv, privateKey, publicKey })
 ## Test
 There's a little test suite which ensures the lib works as expected. You can run it either directly:
 ```sh
-node test/index.js
+node test/utils.js
+node test/generic.js
+node test/ciphers.js
 ```
 
 or via npm:
