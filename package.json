@@ -9,7 +9,7 @@
   },
   "keywords": ["WebCrypto", "crypto", "subtle", "encryption", "decryption", "nacl", "e2ee"],
   "author": "Johannes J. Schmidt",
-  "license": "Apache 2.0",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/jo/webcryptobox-js"
