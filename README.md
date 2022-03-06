@@ -11,6 +11,7 @@ This library provides easy to use and convenient wrappers around the WebCrypto p
 
 It works directly in the browser and in latest Node.js versions (via [the experimental WebCrypto API](https://nodejs.org/api/webcrypto.html)).
 
+Works nicely together with the [Rust Webcryptobox](https://github.com/jo/webcryptobox-rs) and [Bash Webcryptobox](https://github.com/jo/webcryptobox-sh).
 
 ## Usage
 In Node, you can use the lib as usual:
@@ -67,16 +68,16 @@ Above are the defaults, so its the same as:
 const wcb = new Webcryptobox()
 ```
 
-#### Supported Curves
+#### Supported EC Curves
 * `P-256`: 256-bit prime field Weierstrass curve. Also known as `secp256r1` or `prime256v1`.
 * `P-384`: 384-bit prime field Weierstrass curve. Also known as: `secp384r1` or `ansip384r1`.
 * `P-521`: 521-bit prime field Weierstrass curve. Also known as: `secp521r1` or `ansip521r1`.
 
-#### Supported Modes
+#### Supported AES Modes
 * `CBC`: Cipher Block Chaining Mode
 * `GCM`: Galois/Counter Mode
 
-#### Supported Length
+#### Supported AES Key Lengths
 * `128`
 * `256`
 
