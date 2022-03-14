@@ -279,6 +279,18 @@ const key = await wcb.deriveKey({ privateKey, publicKey })
 // }
 ```
 
+#### `deriveBits`
+Given a key pair, this function derives a 16 bit long password in an ArrayBuffer.
+
+```js
+const { privateKey, publicKey } = await wcb.generateKeyPair()
+const key = await wcb.deriveBits({ privateKey, publicKey })
+// ArrayBuffer {
+//   [Uint8Contents]: <ac 54 d5 01 74 ca d6 87 f5 65 18 d0 4f e4 0f 18 77 ... more bytes>,
+//   byteLength: 16
+// }
+```
+
 #### `derivePublicKey`
 Given a private key, returns its corresponding public key. As there is no direct API for this in WebCrypto, this utilizes import and export of the key (in `jwk` format), while removing the private key parts.
 

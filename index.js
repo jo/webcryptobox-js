@@ -109,11 +109,11 @@ export class Webcryptobox {
     return crypto.subtle.generateKey(
       this.ecParams,
       true,
-      ['deriveKey']
+      ['deriveKey', 'deriveBits']
     )
   }
 
-  // generate aes-cbc key
+  // generate aes key
   generateKey () {
     return crypto.subtle.generateKey(
       this.aesParams,
@@ -122,7 +122,7 @@ export class Webcryptobox {
     )
   }
 
-  // derive aes-cbc encryption key from ecdh key pair
+  // derive aes encryption key from ecdh public and private key
   deriveKey ({ publicKey, privateKey }) {
     return crypto.subtle.deriveKey(
       {
@@ -133,6 +133,18 @@ export class Webcryptobox {
       this.aesParams,
       true,
       ['encrypt', 'decrypt']
+    )
+  }
+
+  // derive password from ecdh key pair
+  deriveBits ({ length, publicKey, privateKey }) {
+    return crypto.subtle.deriveBits(
+      {
+        ...this.ecParams,
+        public: publicKey
+      },
+      privateKey,
+      length * 8
     )
   }
 
@@ -235,6 +247,16 @@ export class Webcryptobox {
     return utils.encodePrivateKeyPem(data)
   }
 
+  // export an encrypted private ecdh key as pkcs8
+  exportEncryptedPrivateKey ({ key, privateKey, publicKey }) {
+    // 1. wrap key
+    // 2. export wrapped key
+    return crypto.subtle.exportKey(
+      'pkcs8',
+      privateKey
+    )
+  }
+
   // import a private ecdh key pkcs8
   importPrivateKey (data) {
     return crypto.subtle.importKey(
@@ -242,7 +264,7 @@ export class Webcryptobox {
       data,
       this.ecParams,
       true,
-      ['deriveKey']
+      ['deriveKey', 'deriveBits']
     )
   }
 

@@ -20,7 +20,10 @@ MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE3y8enCDB5RoD9og6Ilattmsqt7G/
 -----END PUBLIC KEY-----
 `,
     sha1Fingerprint: '0ee40270fbe7f14f46a90e9cc2b194e81c4b6508',
-    sha256Fingerprint: 'f40888f7b26986c4c9a374c82e3527033c0623e8c3079d0b769cff46dfb0f381'
+    sha256Fingerprint: 'f40888f7b26986c4c9a374c82e3527033c0623e8c3079d0b769cff46dfb0f381',
+    password: new Uint8Array([
+       243, 39, 17, 120, 164, 174, 121, 169, 3, 169, 236, 34, 17, 207, 102, 8
+    ])
   },
   'P-384': {
     privateKeyPem: `-----BEGIN PRIVATE KEY-----
@@ -37,7 +40,10 @@ EMVMUd1A045XuEp9pL50NZHCMzpTzzk0
 -----END PUBLIC KEY-----
 `,
     sha1Fingerprint: '4025ae6eebe2337bdd757cffb456daeb42986428',
-    sha256Fingerprint: 'ef405ee5f90072a55601033f812146665d9f9dc5922d974cb20953e0ecfe1dfb'
+    sha256Fingerprint: 'ef405ee5f90072a55601033f812146665d9f9dc5922d974cb20953e0ecfe1dfb',
+    password: new Uint8Array([
+      35, 249, 121, 200, 10, 177, 31, 142, 158, 142, 107, 111, 161, 37, 94, 226
+    ])
   },
   'P-521': {
     privateKeyPem: `-----BEGIN PRIVATE KEY-----
@@ -57,7 +63,10 @@ d9/kSDNOMLm+EAIA6C0=
 -----END PUBLIC KEY-----
 `,
     sha1Fingerprint: 'd91829d8fc9a28608e007149e1cf3c8f35d26c5f',
-    sha256Fingerprint: '0c8584b5a48138cde0cb3788734870108a90ed0a7eb62498f00c0838b6868653'
+    sha256Fingerprint: '0c8584b5a48138cde0cb3788734870108a90ed0a7eb62498f00c0838b6868653',
+    password: new Uint8Array([
+      0, 212, 225, 22, 80, 136, 36, 142, 33, 144, 117, 93, 78, 201, 53, 127
+    ])
   }
 }
 
@@ -75,7 +84,10 @@ JAwu/GZMqHzg1guz/6uqodMGxFfugC632WQNF85aPJ0iYsVXUnm6pI7CVA==
 -----END PUBLIC KEY-----
 `,
     sha1Fingerprint: '6c88bbdc4f462acaabac1cabe0876e6bee0185a8',
-    sha256Fingerprint: '3988b5d449b9b57d1d55f9448520bd776209f64b7a12604f7fbd66fa7eadb4a1'
+    sha256Fingerprint: '3988b5d449b9b57d1d55f9448520bd776209f64b7a12604f7fbd66fa7eadb4a1',
+    password: new Uint8Array([
+      160, 243, 81, 210, 118, 155, 197, 224, 36, 172, 27, 43, 212, 227, 223, 196
+    ])
   },
   'P-384': {
     privateKeyPem: `-----BEGIN PRIVATE KEY-----
@@ -92,7 +104,10 @@ L4Nz4s0slX2xEc897aYSMiVqbEI+Kosc
 -----END PUBLIC KEY-----
 `,
     sha1Fingerprint: 'c80a767bb7bfafe79534041e4849bcdac6c9dc6e',
-    sha256Fingerprint: '4e3c056bcf548b7422531a2249a36baa9d9a235150dbec5bb07cc8b8dd4e58da'
+    sha256Fingerprint: '4e3c056bcf548b7422531a2249a36baa9d9a235150dbec5bb07cc8b8dd4e58da',
+    password: new Uint8Array([
+      10, 7, 223, 63, 51, 32, 91, 41, 235, 52, 156, 55, 63, 248, 24, 226
+    ])
   },
   'P-521': {
     privateKeyPem: `-----BEGIN PRIVATE KEY-----
@@ -112,7 +127,10 @@ B/k+g+ZT4SkfFrjbQQryhig7QsE8cyQxRKNhemYSddbnFf7CzSa3eti14zeWlEQK
 -----END PUBLIC KEY-----
 `,
     sha1Fingerprint: '12a5fc4b7fd94d291d94f8f9e1357675b4bd25c8',
-    sha256Fingerprint: 'fd5397c78d0c249d864408f9cf90994f3e7a6505077b6262845ad6d6e7609e9c'
+    sha256Fingerprint: 'fd5397c78d0c249d864408f9cf90994f3e7a6505077b6262845ad6d6e7609e9c',
+    password: new Uint8Array([
+      0, 221, 22, 12, 113, 57, 255, 119, 187, 119, 232, 29, 78, 236, 137, 62
+    ])
   }
 }
 
@@ -249,6 +267,16 @@ for (const curve in keys) {
               t.test('deriveKey for bob', async t => {
                 const derivedKey = await wcb.deriveKey({ privateKey: bob.privateKey, publicKey: alice.publicKey })
                 t.same(derivedKey, key)
+              })
+
+              t.test('deriveBits for alice', async t => {
+                const derivedPassword = await wcb.deriveBits({ length: 16, privateKey: alice.privateKey, publicKey: alice.publicKey })
+                t.same(new Uint8Array(derivedPassword), alice.password)
+              })
+
+              t.test('deriveBits for bob', async t => {
+                const derivedPassword = await wcb.deriveBits({ length: 16, privateKey: bob.privateKey, publicKey: bob.publicKey })
+                t.same(new Uint8Array(derivedPassword), bob.password)
               })
 
               t.test('derivePublicKey for alice', async t => {
