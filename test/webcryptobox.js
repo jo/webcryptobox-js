@@ -149,9 +149,9 @@ tap.test('ciphers', async g => {
     })
 
     t.test('exportEncryptedPrivateKeyPem and importEncryptedPrivateKeyPem', async t => {
-      const password = wcb.decodeText('secure')
-      const pem = await wcb.exportEncryptedPrivateKeyPem({ key: alice.privateKey, password })
-      const alicePrivateKey = await wcb.importEncryptedPrivateKeyPem({ pem, password })
+      const passphrase = wcb.decodeText('secure')
+      const pem = await wcb.exportEncryptedPrivateKeyPem({ key: alice.privateKey, passphrase })
+      const alicePrivateKey = await wcb.importEncryptedPrivateKeyPem({ pem, passphrase })
       await t.sameKey(alicePrivateKey, alice.privateKey)
     })
     
