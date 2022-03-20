@@ -201,7 +201,7 @@ const key = await wcb.deriveKey({ privateKey, publicKey })
 ```
 
 #### `deriveBits`
-Given a key pair, this function derives a 16 bit long password in an ArrayBuffer.
+Given a key pair, this function derives 16 bytes in an ArrayBuffer.
 
 ```js
 const { privateKey, publicKey } = await wcb.generateKeyPair()
@@ -213,7 +213,16 @@ const key = await wcb.deriveBits({ privateKey, publicKey })
 ```
 
 #### `derivePassword`
-To be described.
+Given a key pair, this function derives a password of given length as an ArrayBuffer.
+
+```js
+const { privateKey, publicKey } = await wcb.generateKeyPair()
+const key = await wcb.derivePassword({ privateKey, publicKey, length: 16 })
+// ArrayBuffer {
+//   [Uint8Contents]: <ac 54 d5 01 74 ca d6 87 f5 65 18 d0 4f e4 0f 18 77 ... more bytes>,
+//   byteLength: 16
+// }
+```
 
 
 ### Fingerprinting
@@ -244,10 +253,33 @@ const fingerprint = wcb.encodeHex(fingerprintBits)
 Tools for exchanging keys. Also comes with convenient helpers to deal with PEM formatted keys.
 
 #### `exportKey`
-To be described.
+Exports aes key data as ArrayBuffer:
+
+```js
+const key = await wcb.generateKey()
+const data = await wcb.exportKey(key)
+// ArrayBuffer {
+//   [Uint8Contents]: <ac 54 d5 01 74 ca d6 87 f5 65 18 d0 4f e4 0f 18 77 ... more bytes>,
+//   byteLength: 32
+// }
+```
 
 #### `importKey`
-To be described.
+Import aes key data, returns CryptoKey:
+
+```js
+const data = new Uint8Array([
+  210, 29, 179, 47, 204, 90, 109, 111, 95, 64, 50, 48, 192, 105, 44, 236,
+  74, 120, 2, 193, 83, 122, 22, 99, 202, 73, 20, 23, 187, 160, 140, 112
+])
+const key = await wcb.importKey(data)
+// CryptoKey {
+//   type: 'secret',
+//   extractable: true,
+//   algorithm: { name: 'AES-GCM', length: 256 },
+//   usages: [ 'encrypt', 'decrypt' ]
+// }
+```
 
 #### `exportPublicKeyPem`
 Utility function to export a public key as pem:
@@ -267,12 +299,13 @@ const pem = await wcb.exportPublicKeyPem(publicKey)
 Given a pem of a public key, returns the CryptoKey:
 
 ```js
-const publicKey = await wcb.importPublicKeyPem(`-----BEGIN PUBLIC KEY-----
+const pem = `-----BEGIN PUBLIC KEY-----
 MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQBdjbvVyj7NglRaHLqgn2l+Rcw1Lev
 50/9xL6qvIwYSv84jU6xLOMJGY7nouU0tuWmm1+ojHsd3raDfxjsNSmKSOEAbSFJ
 1rnRvBU/DflEh0i/RofX4vmKH3quCKPQ8T1NQoQijyKEOjkQDFqDgpPW03SMusqs
 d9/kSDNOMLm+EAIA6C0=
------END PUBLIC KEY-----`)
+-----END PUBLIC KEY-----`
+const publicKey = await wcb.importPublicKeyPem(pem)
 // CryptoKey {
 //   type: 'public',
 //   extractable: true,
@@ -301,14 +334,15 @@ const pem = await wcb.exportPrivateKeyPem(privateKey)
 Given a pem of a private key, returns the CryptoKey:
 
 ```js
-const privateKey = await wcb.importPrivateKeyPem(`-----BEGIN PRIVATE KEY-----
+const pem = `-----BEGIN PRIVATE KEY-----
 MIHuAgEAMBAGByqGSM49AgEGBSuBBAAjBIHWMIHTAgEBBEIBcf8zEjlssqn4aTEB
 RR43ofwH/4BAXDAAd83Kz1Dyd+Ko0pit4ESgqSu/bJMdnDrpiGYuz0Klarwip8LD
 rYd9mEahgYkDgYYABAF2Nu9XKPs2CVFocuqCfaX5FzDUt6/nT/3Evqq8jBhK/ziN
 TrEs4wkZjuei5TS25aabX6iMex3etoN/GOw1KYpI4QBtIUnWudG8FT8N+USHSL9G
 h9fi+Yofeq4Io9DxPU1ChCKPIoQ6ORAMWoOCk9bTdIy6yqx33+RIM04wub4QAgDo
 LQ==
------END PRIVATE KEY-----`)
+-----END PRIVATE KEY-----`
+const privateKey = await wcb.importPrivateKeyPem(pem)
 // CryptoKey {
 //   type: 'private',
 //   extractable: true,
@@ -318,16 +352,89 @@ LQ==
 ```
 
 #### `exportEncryptedPrivateKeyPem`
-To be described.
+Encrypt a private key with passphrase and export as PEM:
+
+```js
+const { privateKey } = await wcb.generateKeyPair()
+const passphrase = 'secure'
+const pem = await wcb.exportEncryptedPrivateKeyPem({ key: privateKey, passphrase })
+// -----BEGIN ENCRYPTED PRIVATE KEY-----
+// MIIBZjBgBgkqhkiG9w0BBQ0wUzAyBgkqhkiG9w0BBQwwJQQQi9FqU3dish14EV99
+// Bz3tugIDAPoAMAwGCCqGSIb3DQIJBQAwHQYJYIZIAWUDBAEqBBBK8mQ193fArwsz
+// PKt2SvCkBIIBAOKBG4NQBWNDUUxSTJAMy5XnOU6nnX+Sisb9uu8/bAhxRtn3ItTo
+// vGCs2MxtTKQhBRC5WdjU7oEe5rZAsWfoYdb567hPnl19QRaf2cneTNHT5qDdzRF+
+// PrLRyw2+XUDEeeU5vhC4E29LZgigeYdSd2r8fOOcJxrKmMzkyFJCrYFhoqpdw2IS
+// 4FQgJ9axQ2AncSaTqbuhBFQcoIFMrJ21ncVeEtTHS3428RHQJF1czNb/qnj/uIg7
+// ta5OqDeXseEgnF+StrDcnSjkSuqMqXVeKsduZd/5JZz25sbHgLBzRgiqf/1jyrrl
+// j8CC5qXX2PQH6RKBTys/1fRY++y3OVALhb8=
+// -----END ENCRYPTED PRIVATE KEY-----
+```
 
 #### `importEncryptedPrivateKeyPem`
-To be described.
+Decrypt passphrase encrypted private key pem and import the key:
+
+```js
+const pem = `-----BEGIN ENCRYPTED PRIVATE KEY-----
+MIIBZjBgBgkqhkiG9w0BBQ0wUzAyBgkqhkiG9w0BBQwwJQQQi9FqU3dish14EV99
+Bz3tugIDAPoAMAwGCCqGSIb3DQIJBQAwHQYJYIZIAWUDBAEqBBBK8mQ193fArwsz
+PKt2SvCkBIIBAOKBG4NQBWNDUUxSTJAMy5XnOU6nnX+Sisb9uu8/bAhxRtn3ItTo
+vGCs2MxtTKQhBRC5WdjU7oEe5rZAsWfoYdb567hPnl19QRaf2cneTNHT5qDdzRF+
+PrLRyw2+XUDEeeU5vhC4E29LZgigeYdSd2r8fOOcJxrKmMzkyFJCrYFhoqpdw2IS
+4FQgJ9axQ2AncSaTqbuhBFQcoIFMrJ21ncVeEtTHS3428RHQJF1czNb/qnj/uIg7
+ta5OqDeXseEgnF+StrDcnSjkSuqMqXVeKsduZd/5JZz25sbHgLBzRgiqf/1jyrrl
+j8CC5qXX2PQH6RKBTys/1fRY++y3OVALhb8=
+-----END ENCRYPTED PRIVATE KEY-----`
+const passphrase = 'secure'
+const privateKey = await wcb.importEncryptedPrivateKeyPem({ pem, passphrase })
+// CryptoKey {
+//   type: 'private',
+//   extractable: true,
+//   algorithm: { name: 'ECDH', namedCurve: 'P-521' },
+//   usages: [ 'deriveKey' ]
+// }
+```
 
 #### `exportEncryptedPrivateKeyPemTo`
-To be described.
+Encrypt a private key with key pair and export as PEM:
+
+```js
+const share = await wcb.generateKeyPair()
+const alice = await wcb.generateKeyPair()
+const bob = await wcb.generateKeyPair()
+const pem = await wcb.exportEncryptedPrivateKeyPem({
+  key: share.privateKey,
+  privateKey: alice.privateKey,
+  publicKey: bob.publicKey
+})
+// -----BEGIN ENCRYPTED PRIVATE KEY-----
+// MIIBZjBgBgkqhkiG9w0BBQ0wUzAyBgkqhkiG9w0BBQwwJQQQPjQ7/lIPfbHQQHGi
+// QqXaJgIDAPoAMAwGCCqGSIb3DQIJBQAwHQYJYIZIAWUDBAEqBBCI371u15dp+o/N
+// Iqq+O3DQBIIBAJ+hnDVdydYcKYTmmhhUmwybqNkWEWi9pG4un5Xf7bEtm2A2qzoi
+// 73XnmHPfXW+435RgMbLRtJOxqDa519kRvedO1nNIw1Iycs9GynTar+D+fBE/tFmJ
+// 66XwlhKcKe0zMtSoi4FnkeyueEMYpJ7UDx+zVABqwwZdSFUrraeg6g/ljL1SGslg
+// xDhTEyULoLyYV4G1+2t+rRXdzr408v6AAi+fJh/iBiwqd6clc+oNW0iXxHsi5/nH
+// kETXf3RmXRonS7Ema+zhe3hMGlGGV1OMixaUZHGiIB6zc4fHHyzb5ippXEDkZ6e3
+// U+l5Po65rsFkaAcDupfN18Ez9FRAyYbNkz8=
+// -----END ENCRYPTED PRIVATE KEY-----
+```
 
 #### `importEncryptedPrivateKeyPemFrom`
-To be described.
+Decrypts encrypted private key PEM with key pair:
+
+```js
+// alice and bob from above
+const privateKey = await wcb.importEncryptedPrivateKeyPemFrom({
+  pem,
+  privateKey: bob.privateKey,
+  publicKey: alice.publicKey
+})
+// CryptoKey {
+//   type: 'private',
+//   extractable: true,
+//   algorithm: { name: 'ECDH', namedCurve: 'P-521' },
+//   usages: [ 'deriveKey' ]
+// }
+```
 
 
 ### Encryption and Decryption

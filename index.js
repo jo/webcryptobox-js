@@ -209,11 +209,11 @@ export const deriveBits = ({ length, publicKey, privateKey }) => crypto.subtle.d
   length * 8
 )
 
-// derive wrapping key from password with pkdf2
-const deriveWrappingKey = async ({ salt, password }) => {
+// derive wrapping key from passphrase with pkdf2
+const deriveWrappingKey = async ({ salt, passphrase }) => {
   const baseKey = await crypto.subtle.importKey(
     'raw',
-    password,
+    passphrase,
     {
       name: 'PBKDF2'
     },
@@ -383,27 +383,27 @@ export const importPrivateKeyPem = pem => {
 }
 
 // export encrypted private key as pem
-export const exportEncryptedPrivateKeyPem = async ({ key, password }) => {
+export const exportEncryptedPrivateKeyPem = async ({ key, passphrase }) => {
   const salt = await crypto.getRandomValues(new Uint8Array(16))
-  const wrappingKey = await deriveWrappingKey({ salt, password })
+  const wrappingKey = await deriveWrappingKey({ salt, passphrase })
   const { wrappedKey, iv } = await wrapKey({ key, wrappingKey })
   return encodeEncryptedPrivateKeyPem({ wrappedKey, iv, salt })
 }
 
 // import encrypted private key pem
-export const importEncryptedPrivateKeyPem = async ({ pem, password }) => {
+export const importEncryptedPrivateKeyPem = async ({ pem, passphrase }) => {
   const { wrappedKey, iv, salt } = decodeEncryptedPrivateKeyPem(pem)
-  const wrappingKey = await deriveWrappingKey({ salt, password })
+  const wrappingKey = await deriveWrappingKey({ salt, passphrase })
   return unwrapKey({ wrappedKey, wrappingKey, iv })
 }
 
 
 // derive wrapping key from peer
 const deriveWrappingKeyFrom = async ({ salt, privateKey, publicKey }) => {
-  const passwordBits = await derivePassword({ privateKey, publicKey, length: 32 })
-  const passwordHex = encodeHex(passwordBits)
-  const password = decodeText(passwordHex)
-  return deriveWrappingKey({ salt, password })
+  const passphraseBits = await derivePassword({ privateKey, publicKey, length: 32 })
+  const passphraseHex = encodeHex(passphraseBits)
+  const passphrase = decodeText(passphraseHex)
+  return deriveWrappingKey({ salt, passphrase })
 }
 
 // export encrypted private key as pem to peer
