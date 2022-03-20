@@ -27,114 +27,73 @@
 </head>
 <body>
 <h1>Webcryptobox</h1>
-<p>Demo for <a href=https://github.com/jo/webcryptobox-js>https://github.com/jo/webcryptobox-js</a> showing asymetric encryption.</p>
+<p>Demo for <a href=https://github.com/jo/webcryptobox-js>https://github.com/jo/webcryptobox-js</a> showing asymetric encryption ECDH P-521 AES 256 CBC.</p>
 
-<p>
-  <label for=curve>Curve</label>
-  <select id=curve>
-    <option value=P-521 selected>P-521</option>
-    <option value=P-384>P-384</option>
-    <option value=P-256>P-256</option>
-  </select>
-  &nbsp;
-  <label for=mode>Mode</label>
-  <select id=mode>
-    <option value=GCM selected>GCM</option>
-    <option value=CBC>CBC</option>
-  </select>
-  &nbsp;
-  <label for=length>Length</label>
-  <select id=length>
-    <option value=256 selected>256</option>
-    <option value=128>128</option>
-  </select>
-</p>
 <section spellcheck=false>
   <article>
     <h2>Alice</h2>
     <p>
       <label for=your-private-key>Private Key</label>
-      <textarea id=your-private-key rows=8></textarea>
+      <textarea id=your-private-key rows=9></textarea>
     </p>
     <p>
       <label for=your-public-key>Public Key</label>
-      <textarea id=your-public-key rows=6></textarea>
+      <textarea id=your-public-key rows=7></textarea>
     </p>
     <p>
       <label for=your-fingerprint>SHA-256 Fingerprint</label>
       <textarea id=your-fingerprint rows=1 disabled></textarea>
     </p>
     <p>
-      <label for=your-key>Derived Key</label>
-      <textarea id=your-key rows=1 disabled></textarea>
-    </p>
-    <p>
       <label for=your-message>Message to Bob</label>
-      <textarea id=your-message rows=3></textarea>
-    </p>
-    <p>
-      <label for=your-received-iv>Received IV from Bob</label>
-      <textarea id=your-received-iv rows=1 disabled></textarea>
+      <textarea id=your-message rows=4></textarea>
     </p>
     <p>
       <label for=your-received-message>Received Encrypted Message from Bob</label>
-      <textarea id=your-received-message rows=2 disabled></textarea>
+      <textarea id=your-received-message rows=5 disabled></textarea>
     </p>
     <p>
       <label for=your-decrypted-message>Decrypted Message</label>
-      <textarea id=your-decrypted-message rows=3 disabled></textarea>
+      <textarea id=your-decrypted-message rows=4 disabled></textarea>
     </p>
   </article>
   <article>
     <h2>Bob</h2>
     <p>
       <label for=my-private-key>Private Key</label>
-      <textarea id=my-private-key rows=8></textarea>
+      <textarea id=my-private-key rows=9></textarea>
     </p>
     <p>
       <label for=my-public-key>Public Key</label>
-      <textarea id=my-public-key rows=6></textarea>
+      <textarea id=my-public-key rows=7></textarea>
     </p>
     <p>
       <label for=my-fingerprint>SHA-256 Fingerprint</label>
       <textarea id=my-fingerprint rows=1 disabled></textarea>
     </p>
     <p>
-      <label for=my-key>Derived Key</label>
-      <textarea id=my-key rows=1 disabled></textarea>
-    </p>
-    <p>
       <label for=my-message>Message to Alice</label>
-      <textarea id=my-message rows=3></textarea>
-    </p>
-    <p>
-      <label for=my-received-iv>Received IV from Alice</label>
-      <textarea id=my-received-iv rows=1 disabled></textarea>
+      <textarea id=my-message rows=4></textarea>
     </p>
     <p>
       <label for=my-received-message>Received Encrypted Message from Alice</label>
-      <textarea id=my-received-message rows=2 disabled></textarea>
+      <textarea id=my-received-message rows=5 disabled></textarea>
     </p>
     <p>
       <label for=my-decrypted-message>Decrypted Message</label>
-      <textarea id=my-decrypted-message rows=3 disabled></textarea>
+      <textarea id=my-decrypted-message rows=4 disabled></textarea>
     </p>
   </article>
 </section>
 <script type=module>
-  import { utils, Webcryptobox } from './index.js'
+  import * as wcb from './index.js'
 
   class Demo {
     constructor (elements) {
       this.elements = elements
       this.keyPairs = {}
-      this.keys = {}
       this.owners = ['you', 'me']
 
-      this.elements.wcb.curveInput.addEventListener('input', async () => await this.init(), { passive: true })
-      this.elements.wcb.modeInput.addEventListener('input', async () => await this.init(), { passive: true })
-      this.elements.wcb.lengthInput.addEventListener('input', async () => await this.init(), { passive: true })
-      
       for (const owner of this.owners) {
         this.keyPairs[owner] = {}
         this.elements[owner].privateKeyInput.addEventListener('input', async () => await this.onPrivateKeyInput(owner), { passive: true })
@@ -148,57 +107,36 @@
     }
 
     async init () {
-      const curve = this.elements.wcb.curveInput.options[this.elements.wcb.curveInput.selectedIndex].value
-      const mode = this.elements.wcb.modeInput.options[this.elements.wcb.modeInput.selectedIndex].value
-      const length = parseInt(this.elements.wcb.lengthInput.options[this.elements.wcb.lengthInput.selectedIndex].value, 10)
-
-      this.wcb = new Webcryptobox({ curve, mode, length })
-
       for (const owner of this.owners) {
-        this.keyPairs[owner] = await this.wcb.generateKeyPair()
+        this.keyPairs[owner] = await wcb.generateKeyPair()
       }
+
       for (const owner of this.owners) {
         await this.updatePrivateKeyInput(owner)
         await this.updatePublicKeyInput(owner)
         await this.updateFingerprintInput(owner)
-        await this.updateKeyInput(owner)
 
         this.elements[owner].receivedMessageInput.value = ''
-        this.elements[owner].receivedIvInput.value = ''
         this.elements[owner].messageInput.value = ''
         this.elements[owner].decryptedMessageInput.value = ''
       }
     }
 
     async updatePrivateKeyInput (owner) {
-      const pem = await this.wcb.exportPrivateKeyPem(this.keyPairs[owner].privateKey)
+      const pem = await wcb.exportPrivateKeyPem(this.keyPairs[owner].privateKey)
       this.elements[owner].privateKeyInput.value = pem.trim()
     }
 
     async updatePublicKeyInput (owner) {
       const other = this.other(owner)
-      const pem = await this.wcb.exportPublicKeyPem(this.keyPairs[owner].publicKey)
+      const pem = await wcb.exportPublicKeyPem(this.keyPairs[owner].publicKey)
       this.elements[owner].publicKeyInput.value = pem.trim()
     }
 
     async updateFingerprintInput (owner) {
-      const fingerprint = await this.wcb.sha256Fingerprint(this.keyPairs[owner].publicKey)
+      const fingerprintBits = await wcb.sha256Fingerprint(this.keyPairs[owner].publicKey)
+      const fingerprint = wcb.encodeHex(fingerprintBits)
       this.elements[owner].fingerprintInput.value = fingerprint
-    }
-
-    async updateKeyInput (owner) {
-      const other = this.other(owner)
-      const privateKey = this.keyPairs[owner].privateKey
-      const publicKey = this.keyPairs[other].publicKey
-      if (privateKey && publicKey) {
-        const key = await this.wcb.deriveKey({ privateKey, publicKey })
-        this.keys[owner] = key
-        const data = await this.wcb.exportKey(key)
-        this.elements[owner].keyInput.value = utils.encodeHex(data)
-      } else {
-        delete this.keys[owner]
-        this.elements[owner].keyInput.value = ''
-      }
     }
 
     updateMessageInputDisabled (owner) {
@@ -214,12 +152,11 @@
         delete this.keyPairs[owner].privateKey
         this.elements[owner].privateKeyInput.setCustomValidity('')
         this.updateMessageInputDisabled(owner)
-        await this.updateKeyInput(owner)
         return
       }
       try {
-        this.keyPairs[owner].privateKey = await this.wcb.importPrivateKeyPem(pem)
-        this.keyPairs[owner].publicKey = await this.wcb.derivePublicKey(this.keyPairs[owner].privateKey)
+        this.keyPairs[owner].privateKey = await wcb.importPrivateKeyPem(pem)
+        this.keyPairs[owner].publicKey = await wcb.derivePublicKey(this.keyPairs[owner].privateKey)
         await this.updatePublicKeyInput(owner)
         await this.updateFingerprintInput(owner)
         this.elements[owner].privateKeyInput.setCustomValidity('')
@@ -229,7 +166,6 @@
         this.elements[owner].privateKeyInput.setCustomValidity('Private key data is invalid.')
         this.elements[owner].privateKeyInput.reportValidity()
       }
-      await this.updateKeyInput(owner)
       this.updateMessageInputDisabled(owner)
     }
 
@@ -240,11 +176,10 @@
         delete this.keyPairs[owner].publicKey
         this.elements[owner].publicKeyInput.setCustomValidity('')
         this.updateMessageInputDisabled(owner)
-        await this.updateKeyInput(other)
         return
       }
       try {
-        this.keyPairs[owner].publicKey = await this.wcb.importPublicKeyPem(pem)
+        this.keyPairs[owner].publicKey = await wcb.importPublicKeyPem(pem)
         await this.updateFingerprintInput(owner)
         this.elements[owner].publicKeyInput.setCustomValidity('')
       } catch (e) {
@@ -253,32 +188,39 @@
         this.elements[owner].publicKeyInput.setCustomValidity('Public key data is invalid.')
         this.elements[owner].publicKeyInput.reportValidity()
       }
-      await this.updateKeyInput(owner)
       this.updateMessageInputDisabled(owner)
     }
 
     async onMessageInput (owner) {
       const other = this.other(owner)
-      const key = this.keys[owner]
-      if (!key) {
+      const privateKey = this.keyPairs[owner].privateKey
+      if (!privateKey) {
         this.elements[other].receivedMessageInput.value = ''
-        this.elements[other].receivedIvInput.value = ''
+        this.onReceivedMessageInput(other)
+        return
+      }
+      const publicKey = this.keyPairs[other].publicKey
+      if (!publicKey) {
+        this.elements[other].receivedMessageInput.value = ''
         this.onReceivedMessageInput(other)
         return
       }
       const text = this.elements[owner].messageInput.value
-      const message = utils.decodeText(text)
-      const iv = await this.wcb.generateIv()
-      const box = await this.wcb.encrypt({ message, iv, key })
-      this.elements[other].receivedMessageInput.value = utils.encodeBase64(box)
-      this.elements[other].receivedIvInput.value = utils.encodeHex(iv)
+      const message = wcb.decodeText(text)
+      const box = await wcb.encryptTo({ message, privateKey, publicKey })
+      this.elements[other].receivedMessageInput.value = wcb.encodeBase64(box)
       this.onReceivedMessageInput(other)
     }
 
     async onReceivedMessageInput (owner) {
       const other = this.other(owner)
-      const key = this.keys[owner]
-      if (!key) {
+      const privateKey = this.keyPairs[owner].privateKey
+      if (!privateKey) {
+        this.elements[owner].decryptedMessageInput.value = ''
+        return
+      }
+      const publicKey = this.keyPairs[other].publicKey
+      if (!publicKey) {
         this.elements[owner].decryptedMessageInput.value = ''
         return
       }
@@ -287,11 +229,9 @@
         return
       }
       try {
-        const box = utils.decodeBase64(base64Box)
-        const hexIv = this.elements[owner].receivedIvInput.value
-        const iv = utils.decodeHex(hexIv)
-        const openedBox = await this.wcb.decrypt({ box, iv, key })
-        const text = utils.encodeText(openedBox)
+        const box = wcb.decodeBase64(base64Box)
+        const openedBox = await wcb.decryptFrom({ box, privateKey, publicKey })
+        const text = wcb.encodeText(openedBox)
         this.elements[owner].decryptedMessageInput.value = text
       } catch (e) {
         console.warn('cannot decrypt message', e)
@@ -301,29 +241,20 @@
   }
 
   window.demo = new Demo({
-    wcb: {
-      curveInput: document.getElementById('curve'),
-      modeInput: document.getElementById('mode'),
-      lengthInput: document.getElementById('length'),
-    },
     me: {
       privateKeyInput: document.getElementById('my-private-key'),
       publicKeyInput: document.getElementById('my-public-key'),
       fingerprintInput: document.getElementById('my-fingerprint'),
-      keyInput: document.getElementById('my-key'),
       messageInput: document.getElementById('my-message'),
       receivedMessageInput: document.getElementById('my-received-message'),
-      receivedIvInput: document.getElementById('my-received-iv'),
       decryptedMessageInput: document.getElementById('my-decrypted-message')
     },
     you: {
       privateKeyInput: document.getElementById('your-private-key'),
       publicKeyInput: document.getElementById('your-public-key'),
       fingerprintInput: document.getElementById('your-fingerprint'),
-      keyInput: document.getElementById('your-key'),
       messageInput: document.getElementById('your-message'),
       receivedMessageInput: document.getElementById('your-received-message'),
-      receivedIvInput: document.getElementById('your-received-iv'),
       decryptedMessageInput: document.getElementById('your-decrypted-message')
     }
   })

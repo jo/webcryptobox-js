@@ -1,6 +1,6 @@
 {
   "name": "webcryptobox",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "Tiny utility library for asymetric encryption with WebCrypto.",
   "main": "index.js",
   "type": "module",
