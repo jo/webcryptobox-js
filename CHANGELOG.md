@@ -1,5 +1,18 @@
 # Changelog
 
+## v4.0.0 - Preselected Cipher
+Went full circle. Back to a pure collection of functions. Cipher is set to ECDH P-521 AES-256-CBC.
+
+**Features:**
+* initialization vector included in cipher, no manual iv generation needed anymore
+* import and export encrypted private key pems
+
+**Breaking changes:**
+* all functions previously under `utils` are now toplevel exports
+* no more `Webcryptobox` class, class methods moved to toplevel exports using preselected cipher
+* `derivePrivateKey` has been renamed to `getPrivateKey`
+
+
 ## v3.0.0 - Configurable Cipher
 A restructured Webcryptobox, with configurable cipher. The export is now a class, which has to be initialized.
 
