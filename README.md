@@ -241,7 +241,13 @@ const fingerprint = wcb.encodeHex(fingerprintBits)
 
 
 ### Key Import and Export
-Tools for exchanging keys as PEM. Also comes with convenient helpers to deal with PEM formatted keys.
+Tools for exchanging keys. Also comes with convenient helpers to deal with PEM formatted keys.
+
+#### `exportKey`
+To be described.
+
+#### `importKey`
+To be described.
 
 #### `exportPublicKeyPem`
 Utility function to export a public key as pem:

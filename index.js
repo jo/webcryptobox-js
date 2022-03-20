@@ -310,8 +310,6 @@ export const sha1Fingerprint = async key => {
 
 // import & export keys
 
-// internal functions
-
 // import a raw aes key
 export const importKey = data => crypto.subtle.importKey(
   'raw',
@@ -326,6 +324,8 @@ export const exportKey = key => crypto.subtle.exportKey(
   'raw',
   key
 )
+
+// internal functions
 
 // export a public ecdh key as spki
 const exportPublicKey = publicKey => crypto.subtle.exportKey(
