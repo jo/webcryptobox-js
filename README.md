@@ -27,10 +27,10 @@ and then
 import * as wcb from 'webcryptobox'
 ```
 
-In modern browser which support es6 modules, just include the file directly:
+In modern browser which support es6 modules, just include [the file](./webcryptobox.js) directly:
 ```html
 <script type=module>
-  import * as wcb from './´webcryptobox.js'
+  import * as wcb from './webcryptobox.js'
 </script>
 ```
 

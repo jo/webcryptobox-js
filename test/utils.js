@@ -1,5 +1,5 @@
 import tap from 'tap'
-import * as utils from '../index.js'
+import * as utils from '../webcryptobox.js'
 
 tap.test('cipher', async t => {
   t.same(utils.cipher, 'ECDH-P-521-AES-256-CBC')

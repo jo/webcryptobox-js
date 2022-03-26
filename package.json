@@ -2,7 +2,7 @@
   "name": "webcryptobox",
   "version": "4.0.0",
   "description": "Tiny utility library for asymetric encryption with WebCrypto.",
-  "main": "index.js",
+  "main": "webcryptobox.js",
   "type": "module",
   "scripts": {
     "test": "tap --no-cov test/*.js"

@@ -1,6 +1,6 @@
 import tap from 'tap'
 import { webcrypto as crypto } from 'crypto'
-import * as wcb from '../index.js'
+import * as wcb from '../webcryptobox.js'
 
 tap.Test.prototype.addAssert('sameKey', 2, async function (key, otherKey, message, extra) {
   message = message || 'keys should be identical'
