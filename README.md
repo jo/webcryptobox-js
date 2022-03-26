@@ -34,12 +34,15 @@ In modern browser which support es6 modules, just include [the file](./webcrypto
 </script>
 ```
 
-Now you can dance with the lib like its 1984:
+Now you can dance with Webcryptobox like this:
 ```js
-const { privateKey, publicKey } = await wcb.generateKeyPair()
+const alice = await wcb.generateKeyPair()
+const bob = await wcb.generateKeyPair()
 const text = 'Nobody else can offer me something, something heart felt like you did it.'
 const message = wcb.decodeText(text)
-const box = await wcb.encryptoTo({ message, privateKey, publicKey })
+const box = await wcb.encryptTo({ message, alice.privateKey, bob.publicKey })
+const decryptedBox = await wcb.decryptFrom({ box, bob.privateKey, alice.publicKey })
+const decryptedText = wcb.encodeText(decryptedBox)
 ```
 
 
