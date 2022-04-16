@@ -21,7 +21,7 @@
     "url": "https://github.com/jo/webcryptobox-js"
   },
   "files": [
-    "index.js",
+    "webcryptobox.js",
     "LICENSE"
   ],
   "devDependencies": {
