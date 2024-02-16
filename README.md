@@ -30,7 +30,7 @@ import * as wcb from 'webcryptobox'
 In modern browser which support es6 modules, just include [the file](./webcryptobox.js) directly:
 ```html
 <script type=module>
-  import * as wcb from './webcryptobox.js'
+  import * as wcb from './node_modules/webcryptobox/index.js';
 </script>
 ```
 
@@ -38,10 +38,10 @@ Now you can dance with Webcryptobox like this:
 ```js
 const alice = await wcb.generateKeyPair()
 const bob = await wcb.generateKeyPair()
-const text = 'Nobody else can offer me something, something heart felt like you did it.'
+const text = 'Test message'
 const message = wcb.decodeText(text)
-const box = await wcb.encryptTo({ message, alice.privateKey, bob.publicKey })
-const decryptedBox = await wcb.decryptFrom({ box, bob.privateKey, alice.publicKey })
+const box = await wcb.encryptTo({ message, privateKey: alice.privateKey, publicKey: bob.publicKey })
+const decryptedBox = await wcb.decryptFrom({ box, privateKey: bob.privateKey, publicKey: alice.publicKey })
 const decryptedText = wcb.encodeText(decryptedBox)
 ```
 
