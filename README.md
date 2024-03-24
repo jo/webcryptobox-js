@@ -178,7 +178,7 @@ Given a private key, returns its corresponding public key. As there is no direct
 
 ```js
 const { privateKey } = await wcb.generateKeyPair()
-const publicKey = await wcb.derivePublicKey(privateKey)
+const publicKey = await wcb.getPublicKey(privateKey)
 // CryptoKey {
 //   type: 'public',
 //   extractable: true,
@@ -448,10 +448,9 @@ Encrypts a message with aes-cbc:
 
 ```js
 const key = await wcb.generateKey()
-const iv = wcb.generateIv()
 const text = 'my message'
 const message = decodeText(text)
-const data = await wcb.encrypt({ message, iv, key })
+const data = await wcb.encrypt({ message, key })
 // ArrayBuffer {
 //   [Uint8Contents]: <95 e1 e9 d4 72 74 27 6b b3 e3 e3 79 9e c3 dd f0 8a ... more bytes>,
 //   byteLength: 26
@@ -463,13 +462,12 @@ Decrypts a message:
 
 ```js
 const key = await wcb.generateKey()
-const iv = wcb.generateIv()
 
 const text = 'my message'
 const message = decodeText(text)
-const box = await wcb.encrypt({ message, iv, key })
+const box = await wcb.encrypt({ message, key })
 
-const data = await wcb.decrypt({ box, iv, key })
+const data = await wcb.decrypt({ box, key })
 // ArrayBuffer {
 //   [Uint8Contents]: <6d 79 20 6d 65 73 73 61 67 65>,
 //   byteLength: 10
@@ -481,10 +479,9 @@ Encrypts a message with aes-cbc for given private and public ecdh key:
 
 ```js
 const { privateKey, publicKey } = await wcb.generateKeyPair()
-const iv = wcb.generateIv()
 const text = 'my message'
 const message = decodeText(text)
-const data = await wcb.encryptoTo({ message, iv, privateKey, publicKey })
+const data = await wcb.encryptoTo({ message, privateKey, publicKey })
 // ArrayBuffer {
 //   [Uint8Contents]: <e3 93 88 af 9a 48 eb 44 cc a7 d1 11 ca 66 33 a2 31 ... more bytes>,
 //   byteLength: 26
@@ -496,13 +493,12 @@ Decrypts a message for given private and public ecdh key:
 
 ```js
 const { privateKey, publicKey } = await wcb.generateKeyPair()
-const iv = wcb.generateIv()
 
 const text = 'my message'
 const message = decodeText(text)
-const box = await wcb.encryptoTo({ message, iv, privateKey, publicKey })
+const box = await wcb.encryptoTo({ message, privateKey, publicKey })
 
-const data = await wcb.decryptFrom({ box, iv, privateKey, publicKey })
+const data = await wcb.decryptFrom({ box, privateKey, publicKey })
 // ArrayBuffer {
 //   [Uint8Contents]: <6d 79 20 6d 65 73 73 61 67 65>,
 //   byteLength: 10
